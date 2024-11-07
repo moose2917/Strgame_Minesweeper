@@ -327,4 +327,36 @@ body {
     content: '🚩';
     position: absolute;
 }
+
+.mode-toggle {
+    display: none;  /* Hidden by default for desktop */
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.mode-btn {
+    padding: 8px 16px;
+    font-size: 1rem;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    font-family: 'MiSansCH', Arial, sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.mode-btn.active {
+    background-color: #a0a0a0;
+    border-color: #808080 #fff #fff #808080;
+}
+
+/* Show mode toggle only on mobile */
+@media (max-width: 768px) {
+    .mode-toggle {
+        display: flex;
+    }
+}
   

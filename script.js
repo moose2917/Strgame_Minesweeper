@@ -6,6 +6,7 @@ let timer;
 let seconds = 0;
 let remainingMines = mineCount;
 let gameStarted = false;
+let currentMode = 'dig';  // Default mode
 
 const EMOJI_STATES = {
     NORMAL: '🙂',
@@ -41,6 +42,17 @@ function initializeGame() {
     gameBoard.classList.remove('burning');
     gameBoard.innerHTML = '';
     
+    // Add mode toggle handlers
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMode = btn.dataset.mode;
+        });
+    });
+    
+    // Update cell click handlers for mobile
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             const cell = document.createElement("div");
@@ -48,32 +60,16 @@ function initializeGame() {
             cell.dataset.row = row;
             cell.dataset.col = col;
             
-            let touchTimeout;
-            let hasMoved = false;
-            
-            cell.addEventListener('touchstart', (e) => {
-                hasMoved = false;
-                touchTimeout = setTimeout(() => {
-                    if (!hasMoved) {
-                        e.preventDefault();
-                        toggleFlag(row, col);
-                    }
-                }, 300); // 300ms hold to flag
-            });
-            
-            cell.addEventListener('touchmove', () => {
-                hasMoved = true;
-                clearTimeout(touchTimeout);
-            });
-            
-            cell.addEventListener('touchend', (e) => {
-                clearTimeout(touchTimeout);
-                if (!hasMoved && e.timeStamp - e.target.touchStartTime < 300) {
+            // Single click handler for mobile
+            cell.addEventListener('click', (e) => {
+                if (currentMode === 'dig') {
                     revealCell(row, col);
+                } else {
+                    toggleFlag(row, col);
                 }
             });
             
-            cell.addEventListener("click", () => revealCell(row, col));
+            // Keep right-click for desktop
             cell.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 toggleFlag(row, col);
@@ -226,6 +222,19 @@ function checkWin() {
         winMessage.style.display = 'flex';
         winMessage.style.flexDirection = 'column';
     }
+}
+
+// Reset mode when starting new game
+function resetGame() {
+    currentMode = 'dig';
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.mode === 'dig') {
+            btn.classList.add('active');
+        }
+    });
+    initializeGame();
 }
 
 window.onload = initializeGame;

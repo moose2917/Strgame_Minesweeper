@@ -15,7 +15,7 @@
     </div>
     <div class="instruction">
       電腦版：點擊右鍵置放旗子 🚩<br>
-      手機版：長按方格置放旗子 🚩
+      手機版：點擊下方按鈕切換模式
     </div>
     <div class="game-container">
       <div class="status-bar">
@@ -31,6 +31,10 @@
       <div id="loseMessage" style="display: none;">
         <h2>啊！被炎上了</h2>
         <button class="restart-btn" onclick="initializeGame()">再次挑戰</button>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="dig">⛏️ 挖掘</button>
+        <button class="mode-btn" data-mode="flag">🚩 插旗</button>
       </div>
     </div>
   </div>
