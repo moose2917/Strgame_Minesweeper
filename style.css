@@ -52,10 +52,11 @@ body {
     padding: 4px;
     margin-bottom: 10px;
     display: grid;
-    grid-template-columns: 80px 1fr 80px;
+    grid-template-columns: 85px 1fr 85px;
     align-items: center;
     border: 3px solid;
     border-color: #808080 #fff #fff #808080;
+    gap: 5px;
 }
 
 .mine-counter, .timer {
@@ -63,10 +64,10 @@ body {
     color: #ff0000;
     font-family: 'MiSansEN', monospace;
     padding: 2px 4px;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: bold;
     border: 2px inset #808080;
-    width: 80px;
+    width: 85px;
     text-align: center;
 }
 
@@ -271,13 +272,51 @@ body {
     .cell {
         font-size: clamp(0.5rem, 1.2vw, 0.8rem);
     }
+
+    .status-bar {
+        padding: 3px;
+        grid-template-columns: 80px 1fr 80px;
+    }
+
+    .mine-counter, .timer {
+        font-size: 1.4rem;
+        width: 80px;
+        padding: 2px;
+    }
+
+    .reset-button {
+        width: 32px;
+        height: 32px;
+        font-size: 1.4rem;
+    }
+}
+
+/* iPhone-specific adjustments */
+@media (max-width: 390px) {
+    .status-bar {
+        grid-template-columns: 75px 1fr 75px;
+    }
+
+    .mine-counter, .timer {
+        font-size: 1.3rem;
+        width: 75px;
+    }
 }
 
 .instruction {
     color: white;
     font-size: 1rem;
-    margin: 8px 0;
+    margin: 10px 0;
     font-family: 'MiSansCH', Arial, sans-serif;
+    line-height: 1.5;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .instruction {
+        font-size: 0.9rem;
+        padding: 0 10px;
+    }
 }
 
 .cell.flagged {

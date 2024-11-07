@@ -47,11 +47,38 @@ function initializeGame() {
             cell.className = 'cell';
             cell.dataset.row = row;
             cell.dataset.col = col;
+            
+            let touchTimeout;
+            let hasMoved = false;
+            
+            cell.addEventListener('touchstart', (e) => {
+                hasMoved = false;
+                touchTimeout = setTimeout(() => {
+                    if (!hasMoved) {
+                        e.preventDefault();
+                        toggleFlag(row, col);
+                    }
+                }, 300); // 300ms hold to flag
+            });
+            
+            cell.addEventListener('touchmove', () => {
+                hasMoved = true;
+                clearTimeout(touchTimeout);
+            });
+            
+            cell.addEventListener('touchend', (e) => {
+                clearTimeout(touchTimeout);
+                if (!hasMoved && e.timeStamp - e.target.touchStartTime < 300) {
+                    revealCell(row, col);
+                }
+            });
+            
             cell.addEventListener("click", () => revealCell(row, col));
             cell.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 toggleFlag(row, col);
             });
+            
             gameBoard.appendChild(cell);
         }
     }
