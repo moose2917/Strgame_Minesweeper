@@ -1,11 +1,40 @@
 const gridSize = 15;
-const mineCount = 20;
+const mineCount = 5;
 let board = [];
 let minePositions = [];
+let timer;
+let seconds = 0;
+let remainingMines = mineCount;
+let gameStarted = false;
 
 function initializeGame() {
   // Reset game state
-  board = Array.from({ length: gridSize }, () => Array(gridSize).fill({}));
+  clearInterval(timer);
+  seconds = 0;
+  remainingMines = mineCount;
+  gameStarted = false;
+  
+  // Reset emoji
+  document.querySelector('.reset-button').textContent = '😊';
+  
+  // Update displays
+  document.querySelector('.mine-counter').textContent = String(remainingMines).padStart(3, '0');
+  document.querySelector('.timer').textContent = '00:00';
+  
+  // Hide messages
+  document.getElementById('winMessage').style.display = 'none';
+  document.getElementById('loseMessage').style.display = 'none';
+  
+  // Reset board
+  board = Array.from({ length: gridSize }, () => 
+    Array(gridSize).fill().map(() => ({
+      mine: false,
+      revealed: false,
+      flagged: false,
+      adjacentMines: 0
+    }))
+  );
+  
   minePositions = [];
   
   // Clear and generate new board
@@ -26,17 +55,11 @@ function initializeGame() {
         toggleFlag(row, col);
       });
       gameBoard.appendChild(cell);
-      board[row][col] = { revealed: false, mine: false, adjacentMines: 0 };
     }
   }
   
   placeMines();
   calculateAdjacentMines();
-
-  const winMessage = document.getElementById('winMessage');
-  const loseMessage = document.getElementById('loseMessage');
-  winMessage.style.display = 'none';
-  loseMessage.style.display = 'none';
 }
 
 function placeMines() {
@@ -70,22 +93,50 @@ function getNeighbors(row, col) {
   return neighbors;
 }
 
+function startTimer() {
+  timer = setInterval(() => {
+    seconds++;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  const timeDisplay = document.querySelector('.timer');
+  timeDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
 function revealCell(row, col) {
   if (board[row][col].revealed || board[row][col].flagged) return;
   
-  // Check if it's a mine
+  if (!gameStarted) {
+    gameStarted = true;
+    startTimer();
+  }
+  
   if (board[row][col].mine) {
+    clearInterval(timer);
+    document.querySelector('.reset-button').textContent = '😢';
+    
+    // Reveal all mines
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        if (board[r][c].mine) {
+          const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+          mineCell.classList.add('revealed');
+          mineCell.innerHTML = '💣';
+        }
+      }
+    }
+    
+    // Show lose message
     const loseMessage = document.getElementById('loseMessage');
     loseMessage.style.display = 'flex';
-    
-    loseMessage.onclick = () => {
-      loseMessage.style.display = 'none';
-      initializeGame();
-    };
+    loseMessage.style.flexDirection = 'column';
     return;
   }
   
-  // Continue with regular cell reveal logic
   board[row][col].revealed = true;
   const cellDiv = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
   cellDiv.classList.add('revealed');
@@ -116,14 +167,23 @@ function checkWin() {
   }
   
   if (allNonMinesRevealed) {
+    clearInterval(timer);
+    
+    // Reveal all mines
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        if (board[r][c].mine) {
+          const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+          mineCell.classList.add('revealed');
+          mineCell.innerHTML = '💣';
+        }
+      }
+    }
+    
+    // Show win message
     const winMessage = document.getElementById('winMessage');
     winMessage.style.display = 'flex';
-    
-    // 可選：點擊獲勝畫面後重新開始遊戲
-    winMessage.onclick = () => {
-      winMessage.style.display = 'none';
-      initializeGame();
-    };
+    winMessage.style.flexDirection = 'column';
   }
 }
 
@@ -131,8 +191,18 @@ function toggleFlag(row, col) {
   if (board[row][col].revealed) return;
   
   const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-  board[row][col].flagged = !board[row][col].flagged;
-  cell.classList.toggle('flagged');
+  if (!board[row][col].flagged && remainingMines > 0) {
+    board[row][col].flagged = true;
+    cell.classList.add('flagged');
+    remainingMines--;
+  } else if (board[row][col].flagged) {
+    board[row][col].flagged = false;
+    cell.classList.remove('flagged');
+    remainingMines++;
+  }
+  
+  document.querySelector('.mine-counter').textContent = 
+    String(remainingMines).padStart(3, '0');
 }
 
 // Initialize the game on page load

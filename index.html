@@ -11,17 +11,25 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6">
-        <h1 class="mt-4 mb-4">賀瓏踩地雷</h1>
-        <div class="controls mb-4">
-          <button class="btn btn-secondary" onclick="initializeGame()">重新開始</button>
-          <p class="mt-2">右鍵點擊可以插旗幟 🚩</p>
+        <h1 class="mt-4 mb-4">
+          <img src="image/hello_logo.png" alt="Hello Logo" class="game-logo">
+          踩地雷
+        </h1>
+        <div class="status-bar">
+          <div class="mine-counter">020</div>
+          <div class="reset-button">😊</div>
+          <div class="timer">00:00</div>
         </div>
-        <div id="gameBoard"></div>
-        <div id="winMessage" style="display: none;">
-          <h2>恭喜你又平安度過一次公關事件</h2>
-        </div>
-        <div id="loseMessage" style="display: none;">
-          <h2>啊！被炎上了</h2>
+        <div class="game-container">
+          <div id="gameBoard"></div>
+          <div id="winMessage" style="display: none;">
+            <h2>恭喜你又平安度過一次公關事件</h2>
+            <button class="restart-btn" onclick="initializeGame()">再次挑戰</button>
+          </div>
+          <div id="loseMessage" style="display: none;">
+            <h2>啊！被炎上了</h2>
+            <button class="restart-btn" onclick="initializeGame()">再次挑戰</button>
+          </div>
         </div>
       </div>
     </div>
