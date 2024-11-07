@@ -1,11 +1,17 @@
 const gridSize = 15;
-const mineCount = 5;
+const mineCount = 10;
 let board = [];
 let minePositions = [];
 let timer;
 let seconds = 0;
 let remainingMines = mineCount;
 let gameStarted = false;
+
+const EMOJI_STATES = {
+    NORMAL: '🙂',
+    SMILE: '😊',
+    CRY: '😢'
+};
 
 function initializeGame() {
   // Reset game state
@@ -14,8 +20,8 @@ function initializeGame() {
   remainingMines = mineCount;
   gameStarted = false;
   
-  // Reset emoji
-  document.querySelector('.reset-button').textContent = '😊';
+  // Reset emoji to normal state
+  document.querySelector('.reset-button').textContent = EMOJI_STATES.NORMAL;
   
   // Update displays
   document.querySelector('.mine-counter').textContent = String(remainingMines).padStart(3, '0');
@@ -37,8 +43,11 @@ function initializeGame() {
   
   minePositions = [];
   
-  // Clear and generate new board
+  // Get game board reference once
   const gameBoard = document.getElementById("gameBoard");
+  // Remove burning effect if it exists
+  gameBoard.classList.remove('burning');
+  // Clear board
   gameBoard.innerHTML = '';
   
   for (let row = 0; row < gridSize; row++) {
@@ -50,8 +59,6 @@ function initializeGame() {
       cell.addEventListener("click", () => revealCell(row, col));
       cell.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
         toggleFlag(row, col);
       });
       gameBoard.appendChild(cell);
@@ -117,23 +124,29 @@ function revealCell(row, col) {
   
   if (board[row][col].mine) {
     clearInterval(timer);
-    document.querySelector('.reset-button').textContent = '😢';
+    // Change to cry emoji when losing
+    document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
     
-    // Reveal all mines
-    for (let r = 0; r < gridSize; r++) {
-      for (let c = 0; c < gridSize; c++) {
-        if (board[r][c].mine) {
-          const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
-          mineCell.classList.add('revealed');
-          mineCell.innerHTML = '💣';
+    // Get game board reference
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.classList.add('burning');
+    
+    setTimeout(() => {
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          if (board[r][c].mine) {
+            const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+            mineCell.classList.add('revealed');
+            mineCell.innerHTML = '💣';
+          }
         }
       }
-    }
+      
+      const loseMessage = document.getElementById('loseMessage');
+      loseMessage.style.display = 'flex';
+      loseMessage.style.flexDirection = 'column';
+    }, 1000);
     
-    // Show lose message
-    const loseMessage = document.getElementById('loseMessage');
-    loseMessage.style.display = 'flex';
-    loseMessage.style.flexDirection = 'column';
     return;
   }
   
@@ -168,6 +181,8 @@ function checkWin() {
   
   if (allNonMinesRevealed) {
     clearInterval(timer);
+    // Change to smile emoji when winning
+    document.querySelector('.reset-button').textContent = EMOJI_STATES.SMILE;
     
     // Reveal all mines
     for (let r = 0; r < gridSize; r++) {
