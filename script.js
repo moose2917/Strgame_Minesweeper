@@ -1,4 +1,4 @@
-const gridSize = 15;
+const gridSize = 10;
 const mineCount = 10;
 let board = [];
 let minePositions = [];
