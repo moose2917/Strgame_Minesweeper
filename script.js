@@ -14,6 +14,28 @@ const EMOJI_STATES = {
     CRY: '😢'
 };
 
+function isTouchDevice() {
+    return (('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+}
+
+function updateDeviceSpecificElements() {
+    const desktopInstruction = document.querySelector('.desktop-instruction');
+    const mobileInstruction = document.querySelector('.mobile-instruction');
+    const modeToggle = document.querySelector('.mode-toggle');
+    
+    if (isTouchDevice()) {
+        desktopInstruction.style.display = 'none';
+        mobileInstruction.style.display = 'inline-block';
+        modeToggle.style.display = 'flex';
+    } else {
+        desktopInstruction.style.display = 'inline-block';
+        mobileInstruction.style.display = 'none';
+        modeToggle.style.display = 'none';
+    }
+}
+
 function initializeGame() {
     clearInterval(timer);
     seconds = 0;
@@ -237,4 +259,5 @@ function resetGame() {
     initializeGame();
 }
 
+window.addEventListener('load', updateDeviceSpecificElements);
 window.onload = initializeGame;

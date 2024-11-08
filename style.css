@@ -21,12 +21,11 @@ body {
 }
 
 .game-wrapper {
-    width: min(95vw, 95vh);
-    max-width: 600px;
+    width: min(95vw, 95vh, 500px);
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
 }
 
 .header {
@@ -45,9 +44,13 @@ body {
     background-color: #c0c0c0;
     border: 3px solid #808080;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .status-bar {
+    width: calc(100% - 6px);
     background-color: #c0c0c0;
     padding: 4px;
     margin-bottom: 10px;
@@ -88,6 +91,7 @@ body {
 }
 
 #gameBoard {
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     gap: 1px;
@@ -96,7 +100,6 @@ body {
     border-color: #808080 #fff #fff #808080;
     padding: 0;
     aspect-ratio: 1;
-    width: min(95vw, 95vh, 500px);
 }
 
 .cell {
@@ -108,14 +111,12 @@ body {
     align-items: center;
     justify-content: center;
     font-family: 'MiSansEN', monospace;
-    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
     font-weight: 900;
     cursor: pointer;
     padding: 0;
     margin: 0;
     user-select: none;
-    min-width: 30px;
-    min-height: 30px;
 }
 
 .cell.revealed {
@@ -261,33 +262,12 @@ body {
 
 /* Ensure proper scaling on mobile devices */
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
+    .game-wrapper {
+        width: min(95vw, 95vh, 450px);
     }
-    
-    #gameBoard {
-        width: 100%;
-    }
-    
+
     .cell {
-        font-size: clamp(0.5rem, 1.2vw, 0.8rem);
-    }
-
-    .status-bar {
-        padding: 3px;
-        grid-template-columns: 80px 1fr 80px;
-    }
-
-    .mine-counter, .timer {
-        font-size: 1.4rem;
-        width: 80px;
-        padding: 2px;
-    }
-
-    .reset-button {
-        width: 32px;
-        height: 32px;
-        font-size: 1.4rem;
+        font-size: clamp(1rem, 1.8vw, 1.3rem);
     }
 }
 
@@ -308,28 +288,15 @@ body {
     font-size: 1rem;
     margin: 10px 0;
     font-family: 'MiSansCH', Arial, sans-serif;
-    line-height: 1.5;
     text-align: center;
 }
 
-@media (max-width: 768px) {
-    .instruction {
-        font-size: 0.9rem;
-        padding: 0 10px;
-    }
-}
-
-.cell.flagged {
-    font-size: clamp(1rem, 1.8vw, 1.3rem);  /* Slightly smaller for flag emoji */
-}
-
-.cell.flagged::after {
-    content: '🚩';
-    position: absolute;
+.desktop-instruction, .mobile-instruction {
+    display: none;  /* Hidden by default, controlled by JS */
 }
 
 .mode-toggle {
-    display: none;  /* Hidden by default for desktop */
+    display: none;  /* Hidden by default, controlled by JS */
     justify-content: center;
     gap: 10px;
     margin-top: 15px;
