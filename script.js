@@ -194,8 +194,13 @@ function startTimer() {
         seconds++;
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        document.querySelector('.timer').textContent = 
-            `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        // Ensure the timer stays within bounds by limiting to 99:99
+        if (seconds > 5999) {  // 99 minutes * 60 seconds
+            clearInterval(timer);
+        } else {
+            document.querySelector('.timer').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
     }, 1000);
 }
 
