@@ -7,6 +7,9 @@ let seconds = 0;
 let remainingMines = mineCount;
 let gameStarted = false;
 let currentMode = 'dig';  // Default mode
+let playerName = '';
+let isFirstClose = true;  // 追踪是否第一次關閉
+const REDIRECT_URL = "https://content.strnetwork.cc/courses/storminabubbleteacup";  // 在這裡設置要跳轉的網址
 
 const EMOJI_STATES = {
     NORMAL: '🙂',
@@ -159,23 +162,7 @@ function revealCell(row, col) {
     cell.classList.add('revealed');
     
     if (board[row][col].mine) {
-        clearInterval(timer);
-        document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
-        
-        const gameBoard = document.getElementById('gameBoard');
-        gameBoard.classList.add('burning');
-        
-        setTimeout(() => {
-            minePositions.forEach(([r, c]) => {
-                const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
-                mineCell.classList.add('revealed');
-                mineCell.innerHTML = '💣';
-            });
-            
-            const loseMessage = document.getElementById('loseMessage');
-            loseMessage.style.display = 'flex';
-            loseMessage.style.flexDirection = 'column';
-        }, 1000);
+        handleGameLose();
         return;
     } else if (board[row][col].adjacentMines > 0) {
         cell.textContent = board[row][col].adjacentMines;
@@ -264,5 +251,145 @@ function resetGame() {
     initializeGame();
 }
 
+function validateAndStartGame() {
+    const nameInput = document.getElementById('playerName');
+    const errorElement = document.getElementById('nameError');
+    const name = nameInput.value.trim();
+    
+    if (name === '') {
+        errorElement.textContent = '請輸入你的名字！';
+        return;
+    }
+    
+    playerName = name;
+    errorElement.textContent = '';
+    
+    // Hide info page and show game
+    document.getElementById('infoPage').style.display = 'none';
+    document.getElementById('gameWrapper').style.display = 'flex';
+    
+    // Initialize the game
+    initializeGame();
+}
+
+function handleGameLose() {
+    clearInterval(timer);
+    document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
+    
+    // 顯示所有地雷
+    minePositions.forEach(([r, c]) => {
+        const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        mineCell.classList.add('revealed');
+        mineCell.innerHTML = '💣';
+    });
+    
+    // 顯示失敗訊息
+    const loseMessage = document.getElementById('loseMessage');
+    loseMessage.style.display = 'flex';
+    loseMessage.style.flexDirection = 'column';
+    
+    // 重置廣告按鈕和標題的顯示狀態
+    const watchAdButton = document.getElementById('watchAdButton');
+    const loseTitle = document.querySelector('#loseMessage h2');
+    watchAdButton.style.display = 'block';
+    loseTitle.style.display = 'block';
+    
+    // 移除舊的事件監聽器（如果存在）
+    watchAdButton.removeEventListener('click', startAd);
+    // 添加新的事件監聽器
+    watchAdButton.addEventListener('click', startAd);
+}
+
+function startAd() {
+    // 隱藏觀看廣告按鈕和失敗訊息標題
+    document.getElementById('watchAdButton').style.display = 'none';
+    document.querySelector('#loseMessage h2').style.display = 'none';
+    
+    // 顯示廣告容器
+    const adContainer = document.getElementById('adContainer');
+    adContainer.style.display = 'block';
+    
+    const video = document.getElementById('adVideo');
+    const timerDisplay = document.getElementById('adTimer');
+    
+    // 重置視頻
+    video.currentTime = 0;
+    
+    // 確保視頻已加載
+    video.load();
+    
+    // 設置視頻屬性
+    video.playsInline = true;
+    video.muted = false;
+    video.controls = false;
+    
+    // 嘗試播放視頻
+    const playPromise = video.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log('視頻開始播放');
+        }).catch(error => {
+            console.error('視頻播放失敗:', error);
+        });
+    }
+    
+    // 更新計時器
+    const updateTimer = () => {
+        const timeLeft = Math.ceil(video.duration - video.currentTime);
+        timerDisplay.textContent = timeLeft;
+    };
+    
+    // 監聽視頻播放時間更新
+    video.addEventListener('timeupdate', updateTimer);
+    
+    // 修改視頻結束時的處理邏輯
+    video.addEventListener('ended', () => {
+        // 暫停在最後一幀
+        video.pause();
+        
+        // 顯示關閉按鈕
+        const closeButton = document.getElementById('closeAdButton');
+        closeButton.style.display = 'flex';
+        
+        // 添加關閉按鈕點擊事件
+        closeButton.onclick = () => {
+            if (isFirstClose) {
+                // 第一次點擊：跳轉到指定網站並關閉廣告
+                isFirstClose = false;
+                window.open(REDIRECT_URL, '_blank');  // 在新分頁中打開
+                
+                // 直接關閉廣告並重新開始遊戲
+                document.getElementById('loseMessage').style.display = 'none';
+                document.getElementById('adContainer').style.display = 'none';
+                document.getElementById('closeAdButton').style.display = 'none';
+                document.querySelector('#loseMessage h2').style.display = 'block';
+                isFirstClose = true;
+                initializeGame();
+            }
+        };
+    });
+    
+    // 確保每次開始播放廣告時，關閉按鈕都是隱藏的
+    document.getElementById('closeAdButton').style.display = 'none';
+}
+
 window.addEventListener('load', updateDeviceSpecificElements);
-window.onload = initializeGame;
+window.onload = function() {
+    // Existing initialization
+    updateDeviceSpecificElements();
+    initializeGame();
+    
+    // New event listeners
+    document.getElementById('startGameBtn').addEventListener('click', validateAndStartGame);
+    
+    // Hide game wrapper initially
+    document.getElementById('gameWrapper').style.display = 'none';
+    
+    // Add enter key support for name input
+    document.getElementById('playerName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            validateAndStartGame();
+        }
+    });
+};
