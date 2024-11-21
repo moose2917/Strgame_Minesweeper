@@ -32,7 +32,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: clamp(10px, 2vh, 15px);
+    padding: clamp(10px, 2vw, 20px);
 }
 
 /* Logo and title */
@@ -42,42 +43,44 @@ body {
 }
 
 .game-logo {
-    width: 200px;
+    width: clamp(150px, 30vw, 200px);
+    height: auto;
     margin: 0 auto;
 }
 
 /* Game container */
 .game-container {
     width: 100%;
-    aspect-ratio: 1;
     background-color: #c0c0c0;
     border: 3px solid #808080;
-    padding: 10px;
+    padding: clamp(8px, 1.5vw, 10px);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: clamp(5px, 1vw, 10px);
+    position: relative;
+    max-height: calc(100vh - 250px);
 }
 
 /* Status bar */
 .status-bar {
     width: 100%;
     background-color: #c0c0c0;
-    padding: 6px;
+    padding: clamp(4px, 1vw, 6px);
     display: grid;
-    grid-template-columns: 76px 1fr 76px;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     border: 3px solid;
     border-color: #808080 #fff #fff #808080;
-    gap: 10px;
+    gap: clamp(5px, 1vw, 10px);
 }
 
 .mine-counter, .timer {
-    width: 78px;
-    height: 36px;
+    width: clamp(60px, 15vw, 76px);
+    height: clamp(30px, 8vw, 36px);
     background-color: black;
     color: #ff0000;
     font-family: 'MiSansEN', monospace;
-    font-size: 26px;
+    font-size: clamp(16px, 4vw, 26px);
     font-weight: bold;
     border: 2px inset #808080;
     display: flex;
@@ -99,12 +102,9 @@ body {
 }
 
 .reset-button {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+    width: clamp(30px, 8vw, 36px);
+    height: clamp(30px, 8vw, 36px);
+    font-size: clamp(20px, 5vw, 24px);
     background-color: #c0c0c0;
     border: 3px solid;
     border-color: #fff #808080 #808080 #fff;
@@ -123,6 +123,9 @@ body {
     background-color: #808080;
     border: 2px solid;
     border-color: #808080 #fff #fff #808080;
+    min-height: 0;
+    aspect-ratio: 1;
+    max-height: 100%;
 }
 
 .cell {
@@ -134,10 +137,11 @@ body {
     align-items: center;
     justify-content: center;
     font-family: 'MiSansEN', monospace;
-    font-size: min(1.5rem, 4vw);
+    font-size: clamp(12px, 2.5vw, 20px);
     font-weight: 900;
     cursor: pointer;
     user-select: none;
+    max-height: 100%;
 }
 
 /* Instructions */
@@ -146,24 +150,29 @@ body {
     text-align: center;
     font-size: min(1rem, 4vw);
     margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Mode toggle for mobile */
 .mode-toggle {
-    width: 100%;
     display: none;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    gap: clamp(5px, 1vw, 10px);
 }
 
 .mode-btn {
-    padding: min(8px, 2vw) min(16px, 4vw);
-    font-size: min(1rem, 4vw);
+    padding: clamp(4px, 1vw, 8px) clamp(8px, 2vw, 16px);
+    font-size: clamp(12px, 3vw, 14px);
     background-color: #c0c0c0;
     border: 2px solid;
     border-color: #fff #808080 #808080 #fff;
     cursor: pointer;
+}
+
+.mode-btn.active {
+    background-color: #a0a0a0;
+    border-color: #808080 #fff #fff #808080;
 }
 
 /* Responsive adjustments */
@@ -441,13 +450,16 @@ body {
 }
 
 .ad-container {
-    width: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    width: 90%;
     max-width: 600px;
-    margin: 20px auto;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     overflow: hidden;
-    position: relative;
 }
 
 .ad-video {
@@ -502,5 +514,119 @@ body {
 .close-ad-btn:hover {
     background: rgba(0, 0, 0, 0.9);
     transform: scale(1.1);
+}
+
+.skip-ad-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 10px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+.skip-ad-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* Banner advertisement styles */
+.banner-ad {
+    width: 100%;
+    margin-top: clamp(10px, 2vh, 15px);
+    padding: clamp(5px, 1vw, 10px);
+    background-color: black;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.banner-ad:hover {
+    transform: scale(1.02);
+}
+
+.banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+/* 修改響應式設計 */
+@media (max-width: 768px) {
+    .desktop-instruction {
+        display: none;
+    }
+    
+    .mode-toggle {
+        display: flex;
+    }
+}
+
+/* 手機版特別調整 */
+@media (max-width: 768px) {
+    .game-wrapper {
+        padding: 10px;
+        max-height: 100vh;
+        justify-content: flex-start;
+    }
+
+    .game-container {
+        max-height: calc(100vh - 200px);
+    }
+
+    .banner-ad {
+        margin-top: 10px;
+    }
+
+    /* 調整按鈕大小 */
+    .mode-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}
+
+/* iPhone SE 和其他小螢幕設備的特別調整 */
+@media (max-height: 667px) {
+    .game-container {
+        max-height: calc(100vh - 180px);
+    }
+
+    .header {
+        margin-bottom: 5px;
+    }
+
+    .game-logo {
+        width: 150px;
+    }
+
+    .instruction {
+        margin-bottom: 5px;
+    }
+}
+
+/* 確保在極小螢幕上的顯示 */
+@media (max-width: 320px) {
+    .game-wrapper {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .cell {
+        font-size: clamp(8px, 2.5vw, 14px);
+    }
+}
+
+/* 確保在較高螢幕上的顯示 */
+@media (min-height: 800px) {
+    .game-wrapper {
+        gap: 20px;
+    }
 }
   

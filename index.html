@@ -27,9 +27,10 @@
       <div class="info-section">
         <h2>遊戲玩法</h2>
         <ul>
-          <li>電腦版：左鍵點擊挖掘，右鍵插旗</li>
-          <li>手機版：切換挖掘/插旗模式進行操作</li>
-          <li>找出所有安全的格子，避開地雷即可獲勝！</li>
+          <!-- <li>電腦版：左鍵點擊挖掘，右鍵插旗</li>
+          <li>手機版：切換挖掘/插旗模式進行操作</li> -->
+          <li>找出所有安全的格子，<br>
+            避開地雷即可獲勝！</li>
         </ul>
       </div>
       
@@ -53,7 +54,10 @@
     </div>
     <div class="instruction">
       <span class="desktop-instruction">點擊右鍵置放旗子 🚩</span>
-      <span class="mobile-instruction">點擊下方按鈕切換模式</span>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="dig">⛏️ 挖掘</button>
+        <button class="mode-btn" data-mode="flag">🚩 插旗</button>
+      </div>
     </div>
     <div class="game-container">
       <div class="status-bar">
@@ -62,28 +66,31 @@
         <div class="timer">00:00</div>
       </div>
       <div id="gameBoard"></div>
-      <div id="winMessage" style="display: none;">
-        <h2>恭喜你協助賀瓏平安渡過一集</h2>
-        <button class="restart-btn" onclick="initializeGame()">再次挑戰</button>
-      </div>
-      <div id="loseMessage" style="display: none;">
-        <h2>喔喔 講錯話囉！</h2>
-        <!-- 觀看廣告按鈕 -->
-        <button id="watchAdButton" class="watch-ad-btn">觀看廣告以重新遊玩</button>
-        
-        <!-- 廣告視頻容器 (初始隱藏) -->
-        <div id="adContainer" class="ad-container" style="display: none;">
-            <!-- 添加關閉按鈕 -->
-            <div id="closeAdButton" class="close-ad-btn" style="display: none;">✕</div>
-            <video id="adVideo" class="ad-video">
-                <source src="video/賀博短廣告_現正熱映_720p.mov" type="video/mp4">
-            </video>
-            <div class="ad-timer">廣告將在 <span id="adTimer">29</span> 秒後結束</div>
-        </div>
-      </div>
-      <div class="mode-toggle">
-        <button class="mode-btn active" data-mode="dig">⛏️ 挖掘</button>
-        <button class="mode-btn" data-mode="flag">🚩 插旗</button>
+    </div>
+    <div class="banner-ad">
+      <a href="https://content.strnetwork.cc/courses/storminabubbleteacup" target="_blank">
+        <img src="image/TNNS_Banner.png" alt="TNNS Banner" class="banner-image">
+      </a>
+    </div>
+    <div id="winMessage" style="display: none;">
+      <h2>恭喜你協助賀瓏平安渡過一集</h2>
+      <button class="restart-btn" onclick="initializeGame()">再次挑戰</button>
+    </div>
+    <div id="loseMessage" style="display: none;">
+      <h2>喔喔 講錯話囉！</h2>
+      <!-- 觀看廣告按鈕 -->
+      <button id="watchAdButton" class="watch-ad-btn">觀看廣告以重新遊玩</button>
+      
+      <!-- 廣告視頻容器 (初始隱藏) -->
+      <div id="adContainer" class="ad-container" style="display: none;">
+          <!-- 添加關閉按鈕 -->
+          <div id="closeAdButton" class="close-ad-btn" style="display: none;">✕</div>
+          <video id="adVideo" class="ad-video">
+              <source src="video/賀博短廣告_現正熱映_720p.mov" type="video/mp4">
+          </video>
+          <div class="ad-timer">廣告將在 <span id="adTimer">29</span> 秒後結束</div>
+          <!-- 添加略過廣告按鈕 -->
+          <button id="skipAdButton" class="skip-ad-btn" style="display: none;">略過廣告 ▶</button>
       </div>
     </div>
   </div>

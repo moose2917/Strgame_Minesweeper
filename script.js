@@ -1,3 +1,5 @@
+console.log('Script loaded');
+
 const gridSize = 10;
 const mineCount = 10;
 let board = [];
@@ -24,18 +26,17 @@ function isTouchDevice() {
 }
 
 function updateDeviceSpecificElements() {
+    console.log('Updating device specific elements');
+    
     const desktopInstruction = document.querySelector('.desktop-instruction');
-    const mobileInstruction = document.querySelector('.mobile-instruction');
     const modeToggle = document.querySelector('.mode-toggle');
     
     if (isTouchDevice()) {
-        desktopInstruction.style.display = 'none';
-        mobileInstruction.style.display = 'inline-block';
-        modeToggle.style.display = 'flex';
+        if (desktopInstruction) desktopInstruction.style.display = 'none';
+        if (modeToggle) modeToggle.style.display = 'flex';
     } else {
-        desktopInstruction.style.display = 'inline-block';
-        mobileInstruction.style.display = 'none';
-        modeToggle.style.display = 'none';
+        if (desktopInstruction) desktopInstruction.style.display = 'inline-block';
+        if (modeToggle) modeToggle.style.display = 'none';
     }
 }
 
@@ -252,6 +253,8 @@ function resetGame() {
 }
 
 function validateAndStartGame() {
+    console.log('validateAndStartGame called');
+    
     const nameInput = document.getElementById('playerName');
     const errorElement = document.getElementById('nameError');
     const name = nameInput.value.trim();
@@ -264,17 +267,28 @@ function validateAndStartGame() {
     playerName = name;
     errorElement.textContent = '';
     
-    // Hide info page and show game
-    document.getElementById('infoPage').style.display = 'none';
-    document.getElementById('gameWrapper').style.display = 'flex';
+    // 隱藏信息頁面
+    const infoPage = document.getElementById('infoPage');
+    infoPage.style.display = 'none';
+    console.log('Info page hidden');
     
-    // Initialize the game
+    // 顯示遊戲界面
+    const gameWrapper = document.getElementById('gameWrapper');
+    gameWrapper.style.display = 'block';
+    console.log('Game wrapper displayed');
+    
+    // 重新初始化遊戲
     initializeGame();
+    console.log('Game initialized');
 }
 
 function handleGameLose() {
     clearInterval(timer);
     document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
+    
+    // 添加燃燒效果到遊戲板
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.classList.add('burning');
     
     // 顯示所有地雷
     minePositions.forEach(([r, c]) => {
@@ -301,6 +315,10 @@ function handleGameLose() {
 }
 
 function startAd() {
+    // 移除燃燒效果
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.classList.remove('burning');
+    
     // 隱藏觀看廣告按鈕和失敗訊息標題
     document.getElementById('watchAdButton').style.display = 'none';
     document.querySelector('#loseMessage h2').style.display = 'none';
@@ -311,11 +329,15 @@ function startAd() {
     
     const video = document.getElementById('adVideo');
     const timerDisplay = document.getElementById('adTimer');
+    const skipButton = document.getElementById('skipAdButton');
+    const closeButton = document.getElementById('closeAdButton');
+    
+    // 隱藏略過按鈕和關閉按鈕
+    skipButton.style.display = 'none';
+    closeButton.style.display = 'none';
     
     // 重置視頻
     video.currentTime = 0;
-    
-    // 確保視頻已加載
     video.load();
     
     // 設置視頻屬性
@@ -334,62 +356,98 @@ function startAd() {
         });
     }
     
-    // 更新計時器
+    // 更新計時器和檢查是否顯示略過按鈕
     const updateTimer = () => {
         const timeLeft = Math.ceil(video.duration - video.currentTime);
         timerDisplay.textContent = timeLeft;
+        
+        // 在播放 10 秒後顯示略過按鈕
+        if (video.currentTime >= 10 && skipButton.style.display === 'none') {
+            skipButton.style.display = 'block';
+        }
     };
     
     // 監聽視頻播放時間更新
     video.addEventListener('timeupdate', updateTimer);
     
-    // 修改視頻結束時的處理邏輯
+    // 設置略過廣告按鈕點擊事件
+    skipButton.onclick = () => {
+        // 停止視頻播放
+        video.pause();
+        
+        // 關閉廣告並重新開始遊戲
+        document.getElementById('loseMessage').style.display = 'none';
+        adContainer.style.display = 'none';
+        skipButton.style.display = 'none';
+        closeButton.style.display = 'none';
+        document.querySelector('#loseMessage h2').style.display = 'block';
+        
+        // 重新開始遊戲
+        initializeGame();
+    };
+    
+    // 視頻結束時的處理
     video.addEventListener('ended', () => {
         // 暫停在最後一幀
         video.pause();
         
+        // 隱藏略過按鈕
+        skipButton.style.display = 'none';
+        
         // 顯示關閉按鈕
-        const closeButton = document.getElementById('closeAdButton');
         closeButton.style.display = 'flex';
         
-        // 添加關閉按鈕點擊事件
+        // 設置關閉按鈕點擊事件
         closeButton.onclick = () => {
             if (isFirstClose) {
-                // 第一次點擊：跳轉到指定網站並關閉廣告
+                // 第一次點擊：跳轉到指定��站並關閉廣告
                 isFirstClose = false;
-                window.open(REDIRECT_URL, '_blank');  // 在新分頁中打開
+                window.open(REDIRECT_URL, '_blank');
                 
-                // 直接關閉廣告並重新開始遊戲
+                // 關閉廣告並重新開始遊戲
                 document.getElementById('loseMessage').style.display = 'none';
-                document.getElementById('adContainer').style.display = 'none';
-                document.getElementById('closeAdButton').style.display = 'none';
+                adContainer.style.display = 'none';
+                closeButton.style.display = 'none';
                 document.querySelector('#loseMessage h2').style.display = 'block';
                 isFirstClose = true;
                 initializeGame();
             }
         };
     });
-    
-    // 確保每次開始播放廣告時，關閉按鈕都是隱藏的
-    document.getElementById('closeAdButton').style.display = 'none';
 }
 
-window.addEventListener('load', updateDeviceSpecificElements);
-window.onload = function() {
-    // Existing initialization
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
+    // 確保遊戲界面一開始是隱藏的
+    const gameWrapper = document.getElementById('gameWrapper');
+    if (gameWrapper) {
+        gameWrapper.style.display = 'none';
+    }
+    
+    // 確保信息頁面一開始是顯示的
+    const infoPage = document.getElementById('infoPage');
+    if (infoPage) {
+        infoPage.style.display = 'flex';
+    }
+    
+    // 添加開始遊戲按鈕的事件監聽器
+    const startGameBtn = document.getElementById('startGameBtn');
+    if (startGameBtn) {
+        startGameBtn.addEventListener('click', validateAndStartGame);
+        console.log('Start game button listener added');
+    }
+    
+    // 添加輸入框的 Enter 鍵支持
+    const playerNameInput = document.getElementById('playerName');
+    if (playerNameInput) {
+        playerNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                validateAndStartGame();
+            }
+        });
+    }
+    
+    // 更新設備特定元素
     updateDeviceSpecificElements();
-    initializeGame();
-    
-    // New event listeners
-    document.getElementById('startGameBtn').addEventListener('click', validateAndStartGame);
-    
-    // Hide game wrapper initially
-    document.getElementById('gameWrapper').style.display = 'none';
-    
-    // Add enter key support for name input
-    document.getElementById('playerName').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            validateAndStartGame();
-        }
-    });
-};
+});
