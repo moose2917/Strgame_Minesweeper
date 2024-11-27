@@ -107,6 +107,9 @@ function initializeGame() {
     
     placeMines();
     calculateAdjacentMines();
+    
+    // 初始化 banner 輪播
+    initBannerRotation();
 }
 
 function placeMines() {
@@ -400,7 +403,7 @@ function startAd() {
         // 設置關閉按鈕點擊事件
         closeButton.onclick = () => {
             if (isFirstClose) {
-                // 第一次點擊：跳轉到指定��站並關閉廣告
+                // 第一次點擊：跳轉到指定站並關閉廣告
                 isFirstClose = false;
                 window.open(REDIRECT_URL, '_blank');
                 
@@ -414,6 +417,39 @@ function startAd() {
             }
         };
     });
+}
+
+// Banner 輪播功能
+function initBannerRotation() {
+    const container = document.querySelector('.banner-container');
+    let currentIndex = -1;  // 從 -1 開始，這樣第一次執行時會顯示第一張圖
+    
+    function rotateBanner() {
+        currentIndex++;
+        
+        if (currentIndex >= 3) {
+            // 當到第三張時，直接跳回第一張
+            currentIndex = 0;
+            // 關閉過渡效果
+            container.style.transition = 'none';
+            container.style.transform = 'translateX(0)';
+            // 重新開啟過渡效果
+            setTimeout(() => {
+                container.style.transition = 'transform 0.5s ease';
+            }, 50);
+        } else {
+            // 正常切換
+            container.style.transition = 'transform 0.5s ease';
+            container.style.transform = `translateX(-${currentIndex * 33.333}%)`;
+        }
+    }
+
+    // 設置初始狀態
+    container.style.transform = 'translateX(0)';  // 確保一開始顯示第一張圖
+    container.style.transition = 'transform 0.5s ease';
+    
+    // 設置輪播間隔
+    setInterval(rotateBanner, 5000);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -450,4 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 更新設備特定元素
     updateDeviceSpecificElements();
+    
+    // 確保頁面加載完成後始化輪播
+    initBannerRotation();
 });

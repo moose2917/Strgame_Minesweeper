@@ -522,17 +522,19 @@ body {
 /* Banner advertisement styles */
 .banner-ad {
     width: 100%;
-    margin-top: clamp(10px, 2vh, 15px);
-    padding: clamp(5px, 1vw, 10px);
-    background-color: black;
-    border-radius: 8px;
     overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+    margin-top: 20px;
 }
 
-.banner-ad:hover {
-    transform: scale(1.02);
+.banner-container {
+    display: flex;
+    width: 300%;  /* 只需要三張圖片的寬度 */
+    transition: transform 0.5s ease;
+}
+
+.banner-link {
+    width: 33.333%;  /* 每個 banner 佔三分之一 */
+    flex-shrink: 0;
 }
 
 .banner-image {
@@ -550,6 +552,15 @@ body {
     
     .mode-toggle {
         display: flex;
+    }
+
+    .banner-ad {
+        margin-top: 10px;
+        padding: 5px 0;
+    }
+
+    .banner-image {
+        max-height: 80px;
     }
 }
 
