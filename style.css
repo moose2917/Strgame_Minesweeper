@@ -207,6 +207,7 @@ body {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
 }
 
 .restart-btn {
@@ -534,9 +535,10 @@ body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 35%;
+    bottom: 20%;
     white-space: nowrap;
     z-index: 1001;
+    margin-top: 20px;
 }
 
 .watch-ad-btn:hover {
@@ -842,7 +844,14 @@ body {
 @media (max-width: 768px) {
     #loseMessage h2 {
         font-size: 0.9rem;
-        margin: 6px 0;
+        margin: 10px 0;
+    }
+
+    .watch-ad-btn {
+        position: absolute;
+        bottom: 10%;
+        font-size: 1rem;
+        padding: 10px 20px;
     }
 }
 
@@ -850,7 +859,13 @@ body {
 @media (max-width: 320px) {
     #loseMessage h2 {
         font-size: 0.8rem;
-        margin: 4px 0;
+        margin: 6px 0;
+    }
+
+    .watch-ad-btn {
+        bottom: 5%;
+        font-size: 0.9rem;
+        padding: 8px 16px;
     }
 }
 
