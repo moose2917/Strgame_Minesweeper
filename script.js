@@ -23,7 +23,7 @@ const EMOJI_STATES = {
 const mineImages = [
     'image/bump_bedroom.png',
     'image/bump_hot-spring.png',
-    'image/bump_swwimming-pool.png'
+    'image/bump_swimming-pool.png'
 ];
 
 function isTouchDevice() {
@@ -65,7 +65,8 @@ function initializeGame() {
             mine: false,
             revealed: false,
             flagged: false,
-            adjacentMines: 0
+            adjacentMines: 0,
+            mineImage: null
         }))
     );
     
@@ -126,6 +127,7 @@ function placeMines() {
         const col = Math.floor(Math.random() * gridSize);
         if (!board[row][col].mine) {
             board[row][col].mine = true;
+            board[row][col].mineImage = mineImages[Math.floor(Math.random() * mineImages.length)];
             minePositions.push([row, col]);
             minesPlaced++;
         }
@@ -173,7 +175,7 @@ function revealCell(row, col) {
     cell.classList.add('revealed');
     
     if (board[row][col].mine) {
-        cell.style.backgroundImage = "url('image/bump_hot-spring.png')";
+        cell.style.backgroundImage = `url('${board[row][col].mineImage}')`;
         cell.style.backgroundSize = 'contain';
         cell.style.backgroundPosition = 'center';
         cell.style.backgroundRepeat = 'no-repeat';
@@ -507,7 +509,7 @@ function gameOver() {
     minePositions.forEach(([row, col]) => {
         const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
         if (!board[row][col].revealed) {
-            cellElement.style.backgroundImage = "url('image/bump_hot-spring.png')";
+            cellElement.style.backgroundImage = `url('${board[row][col].mineImage}')`;
             cellElement.style.backgroundSize = 'contain';
             cellElement.style.backgroundPosition = 'center';
             cellElement.style.backgroundRepeat = 'no-repeat';
