@@ -865,4 +865,62 @@ body {
     z-index: 1001;
     display: none; /* 預設隱藏 */
 }
+
+/* 調整輸入框區域的樣式 */
+.info-section .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;  /* 增加與按鈕的間距 */
+    width: 100%;
+    max-width: 300px;
+    position: relative;
+    z-index: 2;  /* 確保輸入框在上層 */
+}
+
+.info-section input[type="text"] {
+    padding: 8px 12px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* 手機版特別調整 */
+@media (max-width: 768px) {
+    .info-container {
+        justify-content: flex-start;  /* 從頂部開始排列 */
+        padding-top: 40px;  /* 增加頂部間距 */
+    }
+    
+    .info-section {
+        margin-bottom: 30px;  /* 增加底部間距 */
+    }
+    
+    .start-btn {
+        position: fixed;  /* 固定在底部 */
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        min-width: 200px;
+        z-index: 1;
+    }
+}
+
+/* 在特小螢幕上的調整 */
+@media (max-height: 600px) {
+    .info-container {
+        padding-top: 20px;
+    }
+    
+    .info-section {
+        margin-bottom: 20px;
+    }
+    
+    .start-btn {
+        bottom: 10px;
+    }
+}
   
