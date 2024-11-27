@@ -19,6 +19,13 @@ const EMOJI_STATES = {
     CRY: '😢'
 };
 
+// 在文件開頭添加圖片陣列
+const mineImages = [
+    'image/bump_bedroom.png',
+    'image/bump_hot-spring.png',
+    'image/bump_swwimming-pool.png'
+];
+
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
             (navigator.maxTouchPoints > 0) ||
@@ -166,8 +173,11 @@ function revealCell(row, col) {
     cell.classList.add('revealed');
     
     if (board[row][col].mine) {
-        handleGameLose();
-        return;
+        cell.style.backgroundImage = "url('image/bump_hot-spring.png')";
+        cell.style.backgroundSize = 'contain';
+        cell.style.backgroundPosition = 'center';
+        cell.style.backgroundRepeat = 'no-repeat';
+        gameOver();
     } else if (board[row][col].adjacentMines > 0) {
         cell.textContent = board[row][col].adjacentMines;
         cell.dataset.mines = board[row][col].adjacentMines;
@@ -286,53 +296,32 @@ function validateAndStartGame() {
 }
 
 function handleGameLose() {
-    clearInterval(timer);
-    document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
-    
-    // 立即顯示失敗訊息和抽獎圖片
+    // 顯示失敗訊息
     const loseMessage = document.getElementById('loseMessage');
-    const lotteryContainer = document.getElementById('lotteryContainer');
-    const watchAdButton = document.getElementById('watchAdButton');
-    const loseTitle = document.querySelector('#loseMessage h2');
-    const lotteryText = document.querySelector('.lottery-text');
-    
     loseMessage.style.display = 'flex';
-    loseMessage.style.flexDirection = 'column';
     
-    // 立即顯示抽獎圖片，但隱藏文字
-    lotteryContainer.style.display = 'block';
-    lotteryText.style.display = 'none';
-    watchAdButton.style.display = 'none';
-    loseTitle.style.display = 'none';
+    // 暫時註解掉 lottery 相關的代碼
+    /*
+    // 顯示抽獎容器
+    const lotteryContainer = document.getElementById('lotteryContainer');
+    if (lotteryContainer) {
+        lotteryContainer.style.display = 'block';
+    }
     
-    // 同時進行其他視覺效果
-    const gameBoard = document.getElementById('gameBoard');
-    gameBoard.classList.add('burning');
+    // 添加關閉按鈕事件
+    const closeBtn = document.querySelector('.close-lottery-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            lotteryContainer.style.display = 'none';
+        });
+    }
+    */
     
-    // 顯示所有地雷
-    minePositions.forEach(([r, c]) => {
-        const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
-        mineCell.classList.add('revealed');
-        mineCell.innerHTML = '💣';
-    });
-    
-    // 3秒後顯示文字
-    setTimeout(() => {
-        lotteryText.style.display = 'block';
-    }, 3000);
-    
-    // 設置關閉抽獎圖片的事件
-    const closeLotteryBtn = document.querySelector('.close-lottery-btn');
-    closeLotteryBtn.onclick = () => {
-        lotteryContainer.style.display = 'none';
+    // 顯示觀看廣告按鈕
+    const watchAdButton = document.getElementById('watchAdButton');
+    if (watchAdButton) {
         watchAdButton.style.display = 'block';
-        loseTitle.style.display = 'block';
-    };
-    
-    // 移除舊的事件監聽器（如果存在）
-    watchAdButton.removeEventListener('click', startAd);
-    // 添加新的事件監聽器
-    watchAdButton.addEventListener('click', startAd);
+    }
 }
 
 function startAd() {
@@ -508,3 +497,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // 確保頁面加載完成後始化輪播
     initBannerRotation();
 });
+
+// 修改 gameOver 函數，顯示所有地雷時也使用隨機圖片
+function gameOver() {
+    clearInterval(timer);
+    document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
+    
+    // 顯示所有地雷
+    minePositions.forEach(([row, col]) => {
+        const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        if (!board[row][col].revealed) {
+            cellElement.style.backgroundImage = "url('image/bump_hot-spring.png')";
+            cellElement.style.backgroundSize = 'contain';
+            cellElement.style.backgroundPosition = 'center';
+            cellElement.style.backgroundRepeat = 'no-repeat';
+            cellElement.classList.add('revealed');
+        }
+    });
+    
+    handleGameLose();
+}

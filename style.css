@@ -176,9 +176,14 @@ body {
 
 /* Ensure proper sizing for revealed cells */
 .cell.revealed {
-    border-width: 1px;
-    border-style: solid;
+    background-color: #c0c0c0;
     border-color: #808080;
+}
+
+.cell.revealed[data-mine="true"] {
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
 
 /* Number colors */
