@@ -289,7 +289,23 @@ function handleGameLose() {
     clearInterval(timer);
     document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
     
-    // 添加燃燒效果到遊戲板
+    // 立即顯示失敗訊息和抽獎圖片
+    const loseMessage = document.getElementById('loseMessage');
+    const lotteryContainer = document.getElementById('lotteryContainer');
+    const watchAdButton = document.getElementById('watchAdButton');
+    const loseTitle = document.querySelector('#loseMessage h2');
+    const lotteryText = document.querySelector('.lottery-text');
+    
+    loseMessage.style.display = 'flex';
+    loseMessage.style.flexDirection = 'column';
+    
+    // 立即顯示抽獎圖片，但隱藏文字
+    lotteryContainer.style.display = 'block';
+    lotteryText.style.display = 'none';
+    watchAdButton.style.display = 'none';
+    loseTitle.style.display = 'none';
+    
+    // 同時進行其他視覺效果
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.classList.add('burning');
     
@@ -300,16 +316,18 @@ function handleGameLose() {
         mineCell.innerHTML = '💣';
     });
     
-    // 顯示失敗訊息
-    const loseMessage = document.getElementById('loseMessage');
-    loseMessage.style.display = 'flex';
-    loseMessage.style.flexDirection = 'column';
+    // 3秒後顯示文字
+    setTimeout(() => {
+        lotteryText.style.display = 'block';
+    }, 3000);
     
-    // 重置廣告按鈕和標題的顯示狀態
-    const watchAdButton = document.getElementById('watchAdButton');
-    const loseTitle = document.querySelector('#loseMessage h2');
-    watchAdButton.style.display = 'block';
-    loseTitle.style.display = 'block';
+    // 設置關閉抽獎圖片的事件
+    const closeLotteryBtn = document.querySelector('.close-lottery-btn');
+    closeLotteryBtn.onclick = () => {
+        lotteryContainer.style.display = 'none';
+        watchAdButton.style.display = 'block';
+        loseTitle.style.display = 'block';
+    };
     
     // 移除舊的事件監聽器（如果存在）
     watchAdButton.removeEventListener('click', startAd);
@@ -449,7 +467,7 @@ function initBannerRotation() {
     container.style.transition = 'transform 0.5s ease';
     
     // 設置輪播間隔
-    setInterval(rotateBanner, 5000);
+    setInterval(rotateBanner, 3000);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
