@@ -23,7 +23,8 @@ const EMOJI_STATES = {
 const mineImages = [
     'image/bump_bedroom.png',
     'image/bump_hot-spring.png',
-    'image/bump_swimming-pool.png'
+    'image/bump_swimming-pool.png',
+    'image/bump_vaccine.png'
 ];
 
 function isTouchDevice() {
@@ -185,6 +186,7 @@ function revealCell(row, col) {
         cell.style.backgroundSize = 'contain';
         cell.style.backgroundPosition = 'center';
         cell.style.backgroundRepeat = 'no-repeat';
+        handleGameLose(cell);
         gameOver();
     } else if (board[row][col].adjacentMines > 0) {
         cell.textContent = board[row][col].adjacentMines;
@@ -308,15 +310,27 @@ function validateAndStartGame() {
     console.log('Game initialized');
 }
 
-function handleGameLose() {
-    // 顯示疫苗圖片
-    const vaccineImage = document.querySelector('.vaccine-image');
-    if (vaccineImage) {
-        vaccineImage.style.display = 'block';
+function handleGameLose(clickedCell) {
+    const loseMessage = document.getElementById('loseMessage');
+    const messages = loseMessage.querySelectorAll('h2');
+    
+    // 獲取點擊的地雷圖片
+    const mineImage = clickedCell.style.backgroundImage;
+    
+    // 隱藏所有訊息
+    messages.forEach(msg => msg.style.display = 'none');
+    
+    // 根據地雷圖片顯示對應訊息
+    if (mineImage.includes('bump_bedroom.png')) {
+        messages[0].style.display = 'block'; // 顯示安全性行為的訊息
+    } 
+    else if (mineImage.includes('bump_hot-spring.png') || mineImage.includes('bump_swimming-pool.png')) {
+        messages[1].style.display = 'block'; // 顯示公共澡堂的訊息
+    }
+    else if (mineImage.includes('bump_vaccine.png')) {
+        messages[2].style.display = 'block'; // 顯示 HPV 疫苗的訊息
     }
     
-    // 顯示失敗訊息
-    const loseMessage = document.getElementById('loseMessage');
     loseMessage.style.display = 'flex';
     
     // 確保觀看廣告按鈕可見
@@ -331,7 +345,7 @@ function handleGameLose() {
 function startAd() {
     console.log('開始播放廣告'); // 添加調試日誌
     
-    // 移除燃燒效果
+    // 移除燃燒果
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.classList.remove('burning');
     

@@ -829,15 +829,16 @@ body {
 }
 
 #loseMessage h2 {
-    font-size: 1rem;  /* 一般內文大小 */
-    font-weight: normal;  /* 正常字重 */
-    margin: 8px 0;  /* 調整行距 */
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 8px 0;
     color: #ffffff;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    text-align: center;  /* 文字置中 */
-    padding: 0 15px;  /* 左右留白 */
-    line-height: 1.4;  /* 行高 */
-    max-width: 90%;  /* 確保在小螢幕上有適當的邊距 */
+    text-align: center;
+    padding: 0 15px;
+    line-height: 1.4;
+    max-width: 90%;
+    display: none; /* 預設隱藏所有訊息 */
 }
 
 /* 響應式調整 */
@@ -846,13 +847,6 @@ body {
         font-size: 0.9rem;
         margin: 10px 0;
     }
-
-    .watch-ad-btn {
-        position: absolute;
-        bottom: 10%;
-        font-size: 1rem;
-        padding: 10px 20px;
-    }
 }
 
 /* 在特小螢幕上的調整 */
@@ -860,12 +854,6 @@ body {
     #loseMessage h2 {
         font-size: 0.8rem;
         margin: 6px 0;
-    }
-
-    .watch-ad-btn {
-        bottom: 5%;
-        font-size: 0.9rem;
-        padding: 8px 16px;
     }
 }
 
