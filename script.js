@@ -360,7 +360,7 @@ function showAd() {
     skipAdButton.style.display = 'none';
     closeAdButton.style.display = 'none';
 
-    // 顯示廣告容器
+    // ���示廣告容器
     adContainer.style.display = 'block';
     
     // 重置並播放影片
@@ -514,35 +514,38 @@ function startAd() {
 
 // Banner 輪播功能
 function initBannerRotation() {
-    const container = document.querySelector('.banner-container');
-    let currentIndex = -1;  // 從 -1 開始，這樣第一次執行時會顯示第一張圖
+    const bannerLinks = document.querySelectorAll('.banner-link');
+    let currentIndex = 0;
+    let lastRotationTime = Date.now();
+    
+    // 隱藏所有圖片
+    bannerLinks.forEach(banner => {
+        banner.style.display = 'none';
+    });
+    
+    // 顯示第一張圖片
+    bannerLinks[0].style.display = 'block';
     
     function rotateBanner() {
-        currentIndex++;
-        
-        if (currentIndex >= 3) {
-            // 當到第三張時，直接跳回第一張
-            currentIndex = 0;
-            // 關閉過渡效果
-            container.style.transition = 'none';
-            container.style.transform = 'translateX(0)';
-            // 重新開啟過渡效果
-            setTimeout(() => {
-                container.style.transition = 'transform 0.5s ease';
-            }, 50);
-        } else {
-            // 正常切換
-            container.style.transition = 'transform 0.5s ease';
-            container.style.transform = `translateX(-${currentIndex * 33.333}%)`;
+        const currentTime = Date.now();
+        // 確保距離上次切換已經過了5秒
+        if (currentTime - lastRotationTime >= 5000) {
+            // 隱藏當前圖片
+            bannerLinks[currentIndex].style.display = 'none';
+            
+            // 更新索引，確保按照順序顯示
+            currentIndex = (currentIndex + 1) % bannerLinks.length;
+            
+            // 顯示下一張圖片
+            bannerLinks[currentIndex].style.display = 'block';
+            
+            // 更新上次切換時間
+            lastRotationTime = currentTime;
         }
     }
-
-    // 設置初始狀態
-    container.style.transform = 'translateX(0)';  // 確保一開始顯示第一張圖
-    container.style.transition = 'transform 0.5s ease';
     
-    // 設置輪播間隔
-    setInterval(rotateBanner, 3000);
+    // 每100毫秒檢查一次是否需要切換圖片
+    setInterval(rotateBanner, 100);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
