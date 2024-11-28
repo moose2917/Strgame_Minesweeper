@@ -91,25 +91,21 @@
       <h2>安全性行為是必要，無套性行為不要不要</h2>
       <h2>公共澡堂也是容易讓弟弟妹妹感染的地方喔</h2>
       <h2>HPV疫苗不只預防子宮頸癌，還能有效預防由此病毒引起的口咽癌、</p>
-        頭頸癌、子宮頸癌、肛門癌、陰道癌、外陰癌和菜花等癌症及疾病</h2>
-      <div id="lotteryContainer" class="lottery-container" style="display: none;">
-        <div class="close-lottery-btn">✕</div>
-        <img src="image/lottery.png" alt="Lottery" class="lottery-image">
-        <div class="lottery-text">快來抽獎！</div>
+      頭頸癌、子宮頸癌、肛門癌、陰道癌、外陰癌和菜花等癌症及疾病</h2>
+      
+      <div class="button-group">
+        <button id="learnMoreBtn" class="learn-more-btn">了解更多</button>
+        <button id="restartGameBtn" class="restart-game-btn">重新遊玩</button>
       </div>
-      
-      <button id="watchAdButton" class="watch-ad-btn">觀看廣告以重新遊玩</button>
-      
+
       <!-- 廣告視頻容器 (初始隱藏) -->
       <div id="adContainer" class="ad-container" style="display: none;">
-          <!-- 添加關閉按鈕 -->
-          <div id="closeAdButton" class="close-ad-btn" style="display: none;">✕</div>
-          <video id="adVideo" class="ad-video">
-              <source src="video/賀博短廣告_現正熱映_720p.mov" type="video/mp4">
-          </video>
-          <div class="ad-timer">廣告將在 <span id="adTimer">29</span> 秒後結束</div>
-          <!-- 添加略過廣告按鈕 -->
-          <button id="skipAdButton" class="skip-ad-btn" style="display: none;">略過廣告 ▶</button>
+        <div id="closeAdButton" class="close-ad-btn" style="display: none;">✕</div>
+        <video id="adVideo" class="ad-video">
+          <source src="video/賀博短廣告_現正熱映_720p.mov" type="video/mp4">
+        </video>
+        <div class="ad-timer">廣告將在 <span id="adTimer">29</span> 秒後結束</div>
+        <button id="skipAdButton" class="skip-ad-btn" style="display: none;">略過廣告 ▶</button>
       </div>
     </div>
   </div>

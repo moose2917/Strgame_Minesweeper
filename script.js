@@ -322,24 +322,88 @@ function handleGameLose(clickedCell) {
     
     // 根據地雷圖片顯示對應訊息
     if (mineImage.includes('bump_bedroom.png')) {
-        messages[0].style.display = 'block'; // 顯示安全性行為的訊息
+        messages[0].style.display = 'block';
     } 
     else if (mineImage.includes('bump_hot-spring.png') || mineImage.includes('bump_swimming-pool.png')) {
-        messages[1].style.display = 'block'; // 顯示公共澡堂的訊息
+        messages[1].style.display = 'block';
     }
     else if (mineImage.includes('bump_vaccine.png')) {
-        messages[2].style.display = 'block'; // 顯示 HPV 疫苗的訊息
+        messages[2].style.display = 'block';
     }
     
     loseMessage.style.display = 'flex';
     
-    // 確保觀看廣告按鈕可見
-    const watchAdButton = document.getElementById('watchAdButton');
-    if (watchAdButton) {
-        watchAdButton.style.display = 'block';
-        // 添加點擊事件監聽器
-        watchAdButton.onclick = startAd;
-    }
+    // 移除舊的事件監聽器（如果有的話）
+    const learnMoreBtn = document.getElementById('learnMoreBtn');
+    const restartGameBtn = document.getElementById('restartGameBtn');
+    
+    learnMoreBtn.replaceWith(learnMoreBtn.cloneNode(true));
+    restartGameBtn.replaceWith(restartGameBtn.cloneNode(true));
+    
+    // 重新添加事件監聽器
+    document.getElementById('learnMoreBtn').addEventListener('click', showAd);
+    document.getElementById('restartGameBtn').addEventListener('click', () => {
+        loseMessage.style.display = 'none';
+        initializeGame();
+    });
+}
+
+function showAd() {
+    const adContainer = document.getElementById('adContainer');
+    const adVideo = document.getElementById('adVideo');
+    const adTimer = document.getElementById('adTimer');
+    const skipAdButton = document.getElementById('skipAdButton');
+    const closeAdButton = document.getElementById('closeAdButton');
+    let timeLeft = 29; // 廣告總時長
+
+    // 重置按鈕狀態
+    skipAdButton.style.display = 'none';
+    closeAdButton.style.display = 'none';
+
+    // 顯示廣告容器
+    adContainer.style.display = 'block';
+    
+    // 重置並播放影片
+    adVideo.currentTime = 0;
+    adVideo.play();
+
+    // 5秒後顯示略過按鈕
+    setTimeout(() => {
+        skipAdButton.style.display = 'block';
+    }, 5000);
+
+    // 計時器
+    const timerInterval = setInterval(() => {
+        timeLeft--;
+        adTimer.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            closeAdButton.style.display = 'block';
+        }
+    }, 1000);
+
+    // 影片結束時的處理
+    adVideo.onended = () => {
+        clearInterval(timerInterval);
+        closeAdButton.style.display = 'block';
+    };
+
+    // 略過廣告按鈕事件
+    skipAdButton.onclick = () => {
+        adContainer.style.display = 'none';
+        adVideo.pause();
+        clearInterval(timerInterval);
+        initializeGame();
+    };
+
+    // 關閉廣告按鈕事件
+    closeAdButton.onclick = () => {
+        adContainer.style.display = 'none';
+        adVideo.pause();
+        clearInterval(timerInterval);
+        initializeGame();
+    };
 }
 
 function startAd() {
