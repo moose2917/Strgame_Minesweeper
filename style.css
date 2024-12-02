@@ -448,72 +448,59 @@ body {
     }
 }
 
-/* Info page styles */
+/* Info page 背景 */
 .info-page {
-    background-color: rgba(38, 52, 90, 0.95);
+    background: linear-gradient(135deg, rgba(38, 52, 90, 0.95) 0%, rgba(26, 37, 68, 0.95) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    min-height: 100vh;
 }
 
+/* 資訊容器樣式 */
 .info-container {
-    background-color: #26345A;
+    position: relative;
     border-radius: 15px;
     padding: 20px;
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     max-width: 100%;
     width: 800px;
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    background: url('image/poster_HPV.jpeg') center/cover no-repeat;  /* 直接設置為背景圖 */
 }
 
-.info-section {
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    font-size: 1rem;
-    line-height: 1.4;
+/* 添加遮罩層 */
+.info-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(38, 52, 90, 0.9);  /* 深藍色遮罩 */
+    border-radius: 15px;
 }
 
-.info-section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.info-section p {
-    margin: 5px 0;
-}
-
-.input-group input {
-    padding: 8px 12px;
-    border: 2px solid #ffffff;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
+/* 確保內容在遮罩層上方 */
+.info-content {
+    position: relative;
+    z-index: 1;
     width: 100%;
 }
 
-/* .start-btn {
-    background-color: #3498db;
+/* 文字樣式 */
+.info-container h1,
+.info-container p,
+.info-container .input-group,
+.info-container button {
     color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s ease;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    margin: 10px 0;
 }
-
-.start-btn:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-} */
 
 .ad-container {
     position: fixed;
@@ -701,7 +688,7 @@ body {
     }
 }
 
-/* 確保在較高螢幕上的顯示 */
+/* 保在較高螢幕上的顯示 */
 @media (min-height: 800px) {
     .game-container {
         max-height: min(calc(100vh - 300px), calc(100vw + 120px));
@@ -879,7 +866,7 @@ body {
     z-index: 99999;
     pointer-events: none;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-    display: none;  /* 預設隱藏 */
+    display: none;
 }
 
 /* 只在遊戲結束訊息顯示時才顯示疫苗圖片 */
@@ -900,16 +887,21 @@ body {
     }
 }
 
-/* 調整輸入框區域的樣式 */
+/* 调整消息框层级 */
+#winMessage, #loseMessage {
+    z-index: 9999;
+}
+
+/* 调整输入框区域的样式 */
 .info-section .input-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 20px;  /* 增加與按鈕的間距 */
+    margin-bottom: 20px;  /* 增加与按钮的间距 */
     width: 100%;
     max-width: 300px;
     position: relative;
-    z-index: 2;  /* 確保輸入在上層 */
+    z-index: 2;  /* 确保输入在上层 */
 }
 
 .info-section input[type="text"] {
@@ -921,15 +913,15 @@ body {
     width: 100%;
 }
 
-/* 手機版特別調整 */
+/* 手机版特别调整 */
 @media (max-width: 768px) {
     .info-container {
-        justify-content: flex-start;  /* 從頂部開始排列 */
-        padding-top: 40px;  /* 增加頂部間距 */
+        justify-content: flex-start;  /* 从顶部开始排列 */
+        padding-top: 40px;  /* 增加顶部间距 */
     }
     
     .info-section {
-        margin-bottom: 30px;  /* 增加底部間距 */
+        margin-bottom: 30px;  /* 增加底部间距 */
     }
     
     .start-btn {
@@ -979,7 +971,7 @@ body {
     background-color: #d0d0d0;
 }
 
-/* 手機版按鈕調整 */
+/* 手机版按钮调整 */
 @media (max-width: 768px) {
     .button-group {
         flex-direction: column;
