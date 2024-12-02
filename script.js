@@ -19,6 +19,14 @@ const EMOJI_STATES = {
     CRY: '😢'
 };
 
+// 在文件開頭添加圖片陣列
+const mineImages = [
+    'image/bump_bedroom.png',
+    'image/bump_hot-spring.png',
+    'image/bump_swimming-pool.png',
+    'image/bump_vaccine.png'
+];
+
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
             (navigator.maxTouchPoints > 0) ||
@@ -58,7 +66,8 @@ function initializeGame() {
             mine: false,
             revealed: false,
             flagged: false,
-            adjacentMines: 0
+            adjacentMines: 0,
+            mineImage: null
         }))
     );
     
@@ -110,6 +119,12 @@ function initializeGame() {
     
     // 初始化 banner 輪播
     initBannerRotation();
+    
+    // 隱藏疫苗圖片
+    const vaccineImage = document.querySelector('.vaccine-image');
+    if (vaccineImage) {
+        vaccineImage.style.display = 'none';
+    }
 }
 
 function placeMines() {
@@ -119,6 +134,7 @@ function placeMines() {
         const col = Math.floor(Math.random() * gridSize);
         if (!board[row][col].mine) {
             board[row][col].mine = true;
+            board[row][col].mineImage = mineImages[Math.floor(Math.random() * mineImages.length)];
             minePositions.push([row, col]);
             minesPlaced++;
         }
@@ -166,8 +182,12 @@ function revealCell(row, col) {
     cell.classList.add('revealed');
     
     if (board[row][col].mine) {
-        handleGameLose();
-        return;
+        cell.style.backgroundImage = `url('${board[row][col].mineImage}')`;
+        cell.style.backgroundSize = 'contain';
+        cell.style.backgroundPosition = 'center';
+        cell.style.backgroundRepeat = 'no-repeat';
+        handleGameLose(cell);
+        gameOver();
     } else if (board[row][col].adjacentMines > 0) {
         cell.textContent = board[row][col].adjacentMines;
         cell.dataset.mines = board[row][col].adjacentMines;
@@ -230,15 +250,26 @@ function checkWin() {
         clearInterval(timer);
         document.querySelector('.reset-button').textContent = EMOJI_STATES.SMILE;
         
+        // 顯示所有地雷，使用隨機圖片
         minePositions.forEach(([row, col]) => {
             const mineCell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
             mineCell.classList.add('revealed');
-            mineCell.innerHTML = '💣';
+            // 使用該位置已分配的圖片
+            mineCell.style.backgroundImage = `url('${board[row][col].mineImage}')`;
+            mineCell.style.backgroundSize = 'contain';
+            mineCell.style.backgroundPosition = 'center';
+            mineCell.style.backgroundRepeat = 'no-repeat';
         });
         
         const winMessage = document.getElementById('winMessage');
         winMessage.style.display = 'flex';
         winMessage.style.flexDirection = 'column';
+        
+        // 显示疫苗图片
+        const vaccineImage = document.getElementById('vaccineImage');
+        if (vaccineImage) {
+            vaccineImage.style.display = 'block';
+        }
     }
 }
 
@@ -285,59 +316,139 @@ function validateAndStartGame() {
     console.log('Game initialized');
 }
 
-function handleGameLose() {
-    clearInterval(timer);
-    document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
+function handleGameLose(clickedCell) {
+    const loseMessage = document.getElementById('loseMessage');
+    const messages = loseMessage.querySelectorAll('h2');
     
-    // 添加燃燒效果到遊戲板
-    const gameBoard = document.getElementById('gameBoard');
-    gameBoard.classList.add('burning');
+    // 獲取點擊的地雷圖片
+    const mineImage = clickedCell.style.backgroundImage;
     
-    // 顯示所有地雷
-    minePositions.forEach(([r, c]) => {
-        const mineCell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
-        mineCell.classList.add('revealed');
-        mineCell.innerHTML = '💣';
+    // 隱藏所有訊息
+    messages.forEach(msg => msg.style.display = 'none');
+    
+    // 根據地雷圖片顯示對應訊息
+    if (mineImage.includes('bump_bedroom.png')) {
+        messages[0].style.display = 'block';
+    } 
+    else if (mineImage.includes('bump_hot-spring.png') || mineImage.includes('bump_swimming-pool.png')) {
+        messages[1].style.display = 'block';
+    }
+    else if (mineImage.includes('bump_vaccine.png')) {
+        messages[2].style.display = 'block';
+    }
+    
+    loseMessage.style.display = 'flex';
+    
+    // 移除舊的事件監聽器（如果有的話）
+    const learnMoreBtn = document.getElementById('learnMoreBtn');
+    const restartGameBtn = document.getElementById('restartGameBtn');
+    
+    learnMoreBtn.replaceWith(learnMoreBtn.cloneNode(true));
+    restartGameBtn.replaceWith(restartGameBtn.cloneNode(true));
+    
+    // 重新添加事件監聽器
+    document.getElementById('learnMoreBtn').addEventListener('click', showAd);
+    document.getElementById('restartGameBtn').addEventListener('click', () => {
+        loseMessage.style.display = 'none';
+        initializeGame();
     });
     
-    // 顯示失敗訊息
-    const loseMessage = document.getElementById('loseMessage');
-    loseMessage.style.display = 'flex';
-    loseMessage.style.flexDirection = 'column';
+    // 显示疫苗图片
+    const vaccineImage = document.getElementById('vaccineImage');
+    if (vaccineImage) {
+        vaccineImage.style.display = 'block';
+    }
+}
+
+function showAd() {
+    const adContainer = document.getElementById('adContainer');
+    const adVideo = document.getElementById('adVideo');
+    const adTimer = document.getElementById('adTimer');
+    const skipAdButton = document.getElementById('skipAdButton');
+    const closeAdButton = document.getElementById('closeAdButton');
+    let timeLeft = 29; // 廣告總時長
+
+    // 重置按鈕狀態
+    skipAdButton.style.display = 'none';
+    closeAdButton.style.display = 'none';
+
+    // 示廣告容器
+    adContainer.style.display = 'block';
     
-    // 重置廣告按鈕和標題的顯示狀態
-    const watchAdButton = document.getElementById('watchAdButton');
-    const loseTitle = document.querySelector('#loseMessage h2');
-    watchAdButton.style.display = 'block';
-    loseTitle.style.display = 'block';
-    
-    // 移除舊的事件監聽器（如果存在）
-    watchAdButton.removeEventListener('click', startAd);
-    // 添加新的事件監聽器
-    watchAdButton.addEventListener('click', startAd);
+    // 重置並播放影片
+    adVideo.currentTime = 0;
+    adVideo.play();
+
+    // 5秒後顯示略過按鈕
+    setTimeout(() => {
+        skipAdButton.style.display = 'block';
+    }, 5000);
+
+    // 計時器
+    const timerInterval = setInterval(() => {
+        timeLeft--;
+        adTimer.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            closeAdButton.style.display = 'block';
+        }
+    }, 1000);
+
+    // 影片結束時的處理
+    adVideo.onended = () => {
+        clearInterval(timerInterval);
+        closeAdButton.style.display = 'block';
+    };
+
+    // 略過廣告按鈕事件
+    skipAdButton.onclick = () => {
+        adContainer.style.display = 'none';
+        adVideo.pause();
+        clearInterval(timerInterval);
+        initializeGame();
+    };
+
+    // 關閉廣告按鈕事件
+    closeAdButton.onclick = () => {
+        adContainer.style.display = 'none';
+        adVideo.pause();
+        clearInterval(timerInterval);
+        initializeGame();
+    };
 }
 
 function startAd() {
-    // 移除燃燒效果
+    console.log('開始播放廣告'); // 添加調試日誌
+    
+    // 移除燃燒果
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.classList.remove('burning');
     
     // 隱藏觀看廣告按鈕和失敗訊息標題
-    document.getElementById('watchAdButton').style.display = 'none';
-    document.querySelector('#loseMessage h2').style.display = 'none';
+    const watchAdButton = document.getElementById('watchAdButton');
+    const loseMessageTitle = document.querySelector('#loseMessage h2');
+    
+    if (watchAdButton) watchAdButton.style.display = 'none';
+    if (loseMessageTitle) loseMessageTitle.style.display = 'none';
     
     // 顯示廣告容器
     const adContainer = document.getElementById('adContainer');
-    adContainer.style.display = 'block';
+    if (adContainer) adContainer.style.display = 'block';
     
     const video = document.getElementById('adVideo');
     const timerDisplay = document.getElementById('adTimer');
     const skipButton = document.getElementById('skipAdButton');
     const closeButton = document.getElementById('closeAdButton');
     
+    if (!video) {
+        console.error('找不到視頻元素');
+        return;
+    }
+    
     // 隱藏略過按鈕和關閉按鈕
-    skipButton.style.display = 'none';
-    closeButton.style.display = 'none';
+    if (skipButton) skipButton.style.display = 'none';
+    if (closeButton) closeButton.style.display = 'none';
     
     // 重置視頻
     video.currentTime = 0;
@@ -356,16 +467,19 @@ function startAd() {
             console.log('視頻開始播放');
         }).catch(error => {
             console.error('視頻播放失敗:', error);
+            // 如果播放失敗，可以顯示錯誤訊息或直接重新開始遊戲
+            initializeGame();
         });
     }
     
     // 更新計時器和檢查是否顯示略過按鈕
     const updateTimer = () => {
+        if (!video.duration) return;
         const timeLeft = Math.ceil(video.duration - video.currentTime);
-        timerDisplay.textContent = timeLeft;
+        if (timerDisplay) timerDisplay.textContent = timeLeft;
         
-        // 在播放 10 秒後顯示略過按鈕
-        if (video.currentTime >= 10 && skipButton.style.display === 'none') {
+        // 在播放 5 秒後顯示略過按鈕
+        if (video.currentTime >= 5 && skipButton) {
             skipButton.style.display = 'block';
         }
     };
@@ -374,82 +488,76 @@ function startAd() {
     video.addEventListener('timeupdate', updateTimer);
     
     // 設置略過廣告按鈕點擊事件
-    skipButton.onclick = () => {
-        // 停止視頻播放
-        video.pause();
-        
-        // 關閉廣告並重新開始遊戲
-        document.getElementById('loseMessage').style.display = 'none';
-        adContainer.style.display = 'none';
-        skipButton.style.display = 'none';
-        closeButton.style.display = 'none';
-        document.querySelector('#loseMessage h2').style.display = 'block';
-        
-        // 重新開始遊戲
-        initializeGame();
-    };
+    if (skipButton) {
+        skipButton.onclick = () => {
+            video.pause();
+            document.getElementById('loseMessage').style.display = 'none';
+            adContainer.style.display = 'none';
+            skipButton.style.display = 'none';
+            closeButton.style.display = 'none';
+            if (loseMessageTitle) loseMessageTitle.style.display = 'block';
+            initializeGame();
+        };
+    }
     
     // 視頻結束時的處理
     video.addEventListener('ended', () => {
-        // 暫停在最後一幀
         video.pause();
+        if (skipButton) skipButton.style.display = 'none';
+        if (closeButton) closeButton.style.display = 'flex';
         
-        // 隱藏略過按鈕
-        skipButton.style.display = 'none';
-        
-        // 顯示關閉按鈕
-        closeButton.style.display = 'flex';
-        
-        // 設置關閉按鈕點擊事件
-        closeButton.onclick = () => {
-            if (isFirstClose) {
-                // 第一次點擊：跳轉到指定站並關閉廣告
-                isFirstClose = false;
-                window.open(REDIRECT_URL, '_blank');
-                
-                // 關閉廣告並重新開始遊戲
-                document.getElementById('loseMessage').style.display = 'none';
-                adContainer.style.display = 'none';
-                closeButton.style.display = 'none';
-                document.querySelector('#loseMessage h2').style.display = 'block';
-                isFirstClose = true;
-                initializeGame();
-            }
-        };
+        if (closeButton) {
+            closeButton.onclick = () => {
+                if (isFirstClose) {
+                    isFirstClose = false;
+                    window.open(REDIRECT_URL, '_blank');
+                    
+                    document.getElementById('loseMessage').style.display = 'none';
+                    adContainer.style.display = 'none';
+                    closeButton.style.display = 'none';
+                    if (loseMessageTitle) loseMessageTitle.style.display = 'block';
+                    isFirstClose = true;
+                    initializeGame();
+                }
+            };
+        }
     });
 }
 
 // Banner 輪播功能
 function initBannerRotation() {
-    const container = document.querySelector('.banner-container');
-    let currentIndex = -1;  // 從 -1 開始，這樣第一次執行時會顯示第一張圖
+    const bannerLinks = document.querySelectorAll('.banner-link');
+    let currentIndex = 0;
+    let lastRotationTime = Date.now();
+    
+    // 隱藏所有圖片
+    bannerLinks.forEach(banner => {
+        banner.style.display = 'none';
+    });
+    
+    // 顯示第一張圖片
+    bannerLinks[0].style.display = 'block';
     
     function rotateBanner() {
-        currentIndex++;
-        
-        if (currentIndex >= 3) {
-            // 當到第三張時，直接跳回第一張
-            currentIndex = 0;
-            // 關閉過渡效果
-            container.style.transition = 'none';
-            container.style.transform = 'translateX(0)';
-            // 重新開啟過渡效果
-            setTimeout(() => {
-                container.style.transition = 'transform 0.5s ease';
-            }, 50);
-        } else {
-            // 正常切換
-            container.style.transition = 'transform 0.5s ease';
-            container.style.transform = `translateX(-${currentIndex * 33.333}%)`;
+        const currentTime = Date.now();
+        // 確保距離上次切換已經過了5秒
+        if (currentTime - lastRotationTime >= 5000) {
+            // 隱藏當前圖片
+            bannerLinks[currentIndex].style.display = 'none';
+            
+            // 更新索引，確保按照順序顯示
+            currentIndex = (currentIndex + 1) % bannerLinks.length;
+            
+            // 顯示下一張圖片
+            bannerLinks[currentIndex].style.display = 'block';
+            
+            // 更新上次切換時間
+            lastRotationTime = currentTime;
         }
     }
-
-    // 設置初始狀態
-    container.style.transform = 'translateX(0)';  // 確保一開始顯示第一張圖
-    container.style.transition = 'transform 0.5s ease';
     
-    // 設置輪播間隔
-    setInterval(rotateBanner, 5000);
+    // 每100毫秒檢查一次是否需要切換圖片
+    setInterval(rotateBanner, 100);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -490,3 +598,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // 確保頁面加載完成後始化輪播
     initBannerRotation();
 });
+
+// 修改 gameOver 函數，顯示所有地雷時也使用隨機圖片
+function gameOver() {
+    clearInterval(timer);
+    document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
+    
+    // 顯示所有地雷
+    minePositions.forEach(([row, col]) => {
+        const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        if (!board[row][col].revealed) {
+            cellElement.style.backgroundImage = `url('${board[row][col].mineImage}')`;
+            cellElement.style.backgroundSize = 'contain';
+            cellElement.style.backgroundPosition = 'center';
+            cellElement.style.backgroundRepeat = 'no-repeat';
+            cellElement.classList.add('revealed');
+        }
+    });
+    
+    handleGameLose();
+}
