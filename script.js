@@ -264,6 +264,12 @@ function checkWin() {
         const winMessage = document.getElementById('winMessage');
         winMessage.style.display = 'flex';
         winMessage.style.flexDirection = 'column';
+        
+        // 显示疫苗图片
+        const vaccineImage = document.getElementById('vaccineImage');
+        if (vaccineImage) {
+            vaccineImage.style.display = 'block';
+        }
     }
 }
 
@@ -346,6 +352,12 @@ function handleGameLose(clickedCell) {
         loseMessage.style.display = 'none';
         initializeGame();
     });
+    
+    // 显示疫苗图片
+    const vaccineImage = document.getElementById('vaccineImage');
+    if (vaccineImage) {
+        vaccineImage.style.display = 'block';
+    }
 }
 
 function showAd() {
@@ -360,7 +372,7 @@ function showAd() {
     skipAdButton.style.display = 'none';
     closeAdButton.style.display = 'none';
 
-    // ���示廣告容器
+    // 示廣告容器
     adContainer.style.display = 'block';
     
     // 重置並播放影片
