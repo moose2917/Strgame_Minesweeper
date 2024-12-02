@@ -14,10 +14,13 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Noto Sans TC', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 body {
-    background-color: black;
+    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
     color: white;
     min-height: 100vh;
     display: flex;
@@ -51,9 +54,12 @@ body {
 /* Game container */
 .game-container {
     width: 100%;
-    background-color: #c0c0c0;
-    border: 3px solid #808080;
-    padding: clamp(8px, 1.5vw, 10px);
+    background: linear-gradient(135deg, rgba(45, 61, 104, 0.9) 0%, rgba(38, 52, 90, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: clamp(5px, 1vw, 10px);
@@ -67,36 +73,67 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #c0c0c0;
-    padding: 5px 10px;
+    background: linear-gradient(to right, #2d3d68, #344677);
+    padding: 12px;
     margin-bottom: 8px;
-    border: 3px solid;
-    border-color: #808080 #fff #fff #808080;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mine-counter, .timer {
-    background: #000;
-    color: #f00;
-    padding: 2px 4px;
+    background: linear-gradient(135deg, #1c2642 0%, #26345A 100%);
+    color: #ff4757;
+    padding: 4px 8px;
     font-family: 'Digital-7', monospace;
     font-size: clamp(16px, 4vw, 20px);
     min-width: 54px;
     text-align: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Digital-7', monospace;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
 }
 
-.reset-button {
-    width: clamp(30px, 8vw, 36px);
-    height: clamp(30px, 8vw, 36px);
-    font-size: clamp(20px, 5vw, 24px);
-    background-color: #c0c0c0;
-    border: 3px solid;
-    border-color: #fff #808080 #808080 #fff;
+/* 统一按钮基础样式 */
+.mode-btn, .reset-button, .restart-btn, .learn-more-btn, .restart-game-btn, .start-btn, .watch-ad-btn {
+    background: linear-gradient(135deg, #ff7f50 0%, #ff6b3d 100%);  /* 珊瑚色渐变 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
     cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 统一按钮悬停效果 */
+.mode-btn:hover, .reset-button:hover, .restart-btn:hover, 
+.learn-more-btn:hover, .restart-game-btn:hover, .start-btn:hover, .watch-ad-btn:hover {
+    background: linear-gradient(135deg, #ff8a65 0%, #ff7d64 100%);  /* 稍微亮一点的珊瑚色 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 活跃状态的按钮 */
+.mode-btn.active {
+    background: linear-gradient(135deg, #ff6347 0%, #ff5233 100%);  /* 番茄红色 */
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 重置按钮特殊样式 */
+.reset-button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
-    flex: 0 0 auto;
 }
 
 /* Game board */
@@ -104,22 +141,26 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 1px;
-    background-color: #808080;
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
+    gap: 2px;
+    background-color: #1c2642;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
     min-height: 0;
     aspect-ratio: 1;
     width: 100%;
     max-width: 100%;
     max-height: 100%;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
 }
 
 .cell {
     aspect-ratio: 1;
-    background-color: #c0c0c0;
-    border: 1px solid;
-    border-color: #fff #808080 #808080 #fff;
+    background: linear-gradient(135deg, #2d3d68 0%, #26345A 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,6 +173,24 @@ body {
     height: 100%;
     max-width: 100%;
     max-height: 100%;
+    transition: background-color 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+.cell:hover {
+    background: linear-gradient(135deg, #344677 0%, #2d3d68 100%);
+}
+
+.cell.revealed {
+    background: linear-gradient(135deg, #1c2642 0%, #26345A 100%);
+    color: white;
+    font-size: clamp(20px, 3vw, 24px); /* 增加字体大小 */
+    font-weight: bold; /* 加粗字体 */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
 }
 
 /* Instructions */
@@ -152,17 +211,28 @@ body {
 }
 
 .mode-btn {
-    padding: clamp(4px, 1vw, 8px) clamp(8px, 2vw, 16px);
-    font-size: clamp(12px, 3vw, 14px);
-    background-color: #c0c0c0;
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #2d3d68 0%, #26345A 100%);
+    border: none;
+    border-radius: 6px;
+    color: white;
     cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mode-btn:hover {
+    background-color: #344677;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .mode-btn.active {
-    background-color: #a0a0a0;
-    border-color: #808080 #fff #fff #808080;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive adjustments */
@@ -195,14 +265,14 @@ body {
 }
 
 /* Number colors */
-.cell[data-mines="1"] { color: blue; }
-.cell[data-mines="2"] { color: green; }
-.cell[data-mines="3"] { color: red; }
-.cell[data-mines="4"] { color: darkblue; }
-.cell[data-mines="5"] { color: darkred; }
-.cell[data-mines="6"] { color: teal; }
-.cell[data-mines="7"] { color: black; }
-.cell[data-mines="8"] { color: gray; }
+.cell[data-mines="1"] { color: #74b9ff; }
+.cell[data-mines="2"] { color: #55efc4; }
+.cell[data-mines="3"] { color: #ff7675; }
+.cell[data-mines="4"] { color: #a29bfe; }
+.cell[data-mines="5"] { color: #fab1a0; }
+.cell[data-mines="6"] { color: #81ecec; }
+.cell[data-mines="7"] { color: #ffeaa7; }
+.cell[data-mines="8"] { color: #fd79a8; }
 
 #winMessage, #loseMessage {
     position: absolute;
@@ -214,23 +284,30 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(38, 52, 90, 0.5);
+    backdrop-filter: none;
     padding: 30px;
+    border-radius: 12px;
+    z-index: 9999;
 }
 
 .restart-btn {
-    background-color: #444;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    background-color: #2d3d68;
+    border: none;
+    border-radius: 6px;
     color: white;
-    border: 2px solid #666;
-    padding: 8px 16px;
-    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    margin-top: 30px;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .restart-btn:hover {
-    background-color: #555;
+    background-color: #344677;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes explode {
@@ -346,7 +423,7 @@ body {
     margin-top: 15px;
 }
 
-.mode-btn {
+/* .mode-btn {
     padding: 8px 16px;
     font-size: 1rem;
     background-color: #c0c0c0;
@@ -362,7 +439,7 @@ body {
 .mode-btn.active {
     background-color: #a0a0a0;
     border-color: #808080 #fff #fff #808080;
-}
+} */
 
 /* Show mode toggle only on mobile */
 @media (max-width: 768px) {
@@ -373,142 +450,70 @@ body {
 
 /* Info page styles */
 .info-page {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    background-color: rgba(38, 52, 90, 0.95);
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: black;
-    z-index: 1000;
     padding: 20px;
 }
 
 .info-container {
-    background: url('image/poster_HPV.jpeg') center/contain no-repeat;
-    padding: 10px 10px 10px;
+    background-color: #26345A;
     border-radius: 15px;
+    padding: 20px;
     text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     max-width: 100%;
     width: 800px;
-    height: auto;
-    aspect-ratio: 800/1072;
     position: relative;
-    margin: auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 10px;
-}
-
-/* 添加一個半透明黑色遮罩 */
-.info-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);  /* 半透明黑色背景 */
-    border-radius: 15px;
-}
-
-/* 確保內容在遮罩上層 */
-.info-container > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* 保持文字樣式 */
-.info-section h2 {
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.info-section p, 
-.info-section li {
-    color: #ffffff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    gap: 20px;
 }
 
 .info-section {
     color: white;
-    margin: 0;
-    position: relative;
-    padding: 0 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-.info-section p {
-    color: #ffffff;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-    margin: 2px 0;
+    font-size: 1rem;
     line-height: 1.4;
-    text-align: center;
 }
 
 .info-section h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
-    color: #ffffff;  /* 加強標題顏色 */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);  /* 添加文字陰影 */
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.info-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.info-section li {
-    margin-bottom: 10px;
-    color: #ffffff;  /* 加強文字顏色 */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);  /* 添加文字陰影 */
-}
-
-.input-group {
-    width: 50%;
-    max-width: 100px;
-    margin: 0 auto;
-}
-
-.input-group input {
-    width: 50%;
-    padding: 8px;
-    font-size: clamp(0.8rem, 2.5vw, 1rem);
-}
-
-.input-group label {
-    font-size: clamp(0.8rem, 2.5vw, 1rem);
-    margin-bottom: 5px;
-}
-
-.error-message {
-    color: #ff4444;
-    font-size: 0.9rem;
-    min-height: 20px;
+.info-section p {
     margin: 5px 0;
 }
 
-.start-btn {
+.input-group input {
+    padding: 8px 12px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* .start-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
     padding: 12px 24px;
     font-size: 1.2rem;
-    background-color: #c0c0c0;
-    border: 3px solid;
-    border-color: #fff #808080 #808080 #fff;
-    cursor: pointer;
-    font-family: 'MiSansCH', Arial, sans-serif;
-    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 }
 
 .start-btn:hover {
-    background-color: #d0d0d0;
-}
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+} */
 
 .ad-container {
     position: fixed;
@@ -630,6 +635,10 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+    transform: translateZ(0);
 }
 
 /* 響應式調整 */
@@ -861,14 +870,34 @@ body {
 
 /* 添加疫苗圖片的樣式 */
 .vaccine-image {
-    position: absolute;
-    top: 15%;
+    position: fixed;
+    top: 40%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 25%;
+    transform: translate(-50%, -50%);
+    width: 130px;
     height: auto;
-    z-index: 1001;
-    display: none; /* 預設隱藏 */
+    z-index: 99999;
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    display: none;  /* 預設隱藏 */
+}
+
+/* 只在遊戲結束訊息顯示時才顯示疫苗圖片 */
+#winMessage:not([style*="display: none"]) ~ .vaccine-image,
+#loseMessage:not([style*="display: none"]) ~ .vaccine-image {
+    display: block;
+    animation: vaccineAppear 0.5s ease-out forwards;
+}
+
+@keyframes vaccineAppear {
+    from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 /* 調整輸入框區域的樣式 */
@@ -1003,5 +1032,65 @@ body {
     .info-section {
         gap: 5px;
     }
+}
+
+.cell.flagged {
+    background-color: #344677;
+}
+
+@media (max-width: 768px) {
+    .info-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .info-section {
+        padding: 0 10px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* 确保输入框居中 */
+        width: 100%;
+    }
+
+    .input-group input {
+        width: 80%; /* 调整输入框宽度 */
+        max-width: 300px;
+    }
+
+    .start-btn {
+        width: 80%; /* 调整按钮宽度 */
+        max-width: 300px;
+        margin: 20px auto 0; /* 确保按钮居中 */
+    }
+}
+
+/* 特别针对游戏结束消息中的按钮 */
+#winMessage .restart-btn,
+#loseMessage .restart-btn,
+#loseMessage .learn-more-btn,
+#loseMessage .restart-game-btn {
+    background-color: #2d3d68;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+#winMessage .restart-btn:hover,
+#loseMessage .restart-btn:hover,
+#loseMessage .learn-more-btn:hover,
+#loseMessage .restart-game-btn:hover {
+    background-color: #344677;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
   
