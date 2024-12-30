@@ -14,10 +14,13 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Noto Sans TC', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 body {
-    background-color: black;
+    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
     color: white;
     min-height: 100vh;
     display: flex;
@@ -51,14 +54,18 @@ body {
 /* Game container */
 .game-container {
     width: 100%;
-    background-color: #c0c0c0;
-    border: 3px solid #808080;
-    padding: clamp(8px, 1.5vw, 10px);
+    background: linear-gradient(135deg, rgba(45, 61, 104, 0.9) 0%, rgba(38, 52, 90, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: clamp(5px, 1vw, 10px);
     position: relative;
-    max-height: calc(100vh - 250px);
+    max-height: min(calc(100vh - 250px), calc(100vw + 100px));
+    overflow: hidden;
 }
 
 /* Status bar */
@@ -66,36 +73,67 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #c0c0c0;
-    padding: 5px 10px;
+    background: linear-gradient(to right, #2d3d68, #344677);
+    padding: 12px;
     margin-bottom: 8px;
-    border: 3px solid;
-    border-color: #808080 #fff #fff #808080;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mine-counter, .timer {
-    background: #000;
-    color: #f00;
-    padding: 2px 4px;
+    background: linear-gradient(135deg, #1c2642 0%, #26345A 100%);
+    color: #ff4757;
+    padding: 4px 8px;
     font-family: 'Digital-7', monospace;
     font-size: clamp(16px, 4vw, 20px);
     min-width: 54px;
     text-align: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Digital-7', monospace;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
 }
 
-.reset-button {
-    width: clamp(30px, 8vw, 36px);
-    height: clamp(30px, 8vw, 36px);
-    font-size: clamp(20px, 5vw, 24px);
-    background-color: #c0c0c0;
-    border: 3px solid;
-    border-color: #fff #808080 #808080 #fff;
+/* 统一按钮基础样式 */
+.mode-btn, .reset-button, .restart-btn, .learn-more-btn, .restart-game-btn, .start-btn, .watch-ad-btn {
+    background: linear-gradient(135deg, #ff7f50 0%, #ff6b3d 100%);  /* 珊瑚色渐变 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
     cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 统一按钮悬停效果 */
+.mode-btn:hover, .reset-button:hover, .restart-btn:hover, 
+.learn-more-btn:hover, .restart-game-btn:hover, .start-btn:hover, .watch-ad-btn:hover {
+    background: linear-gradient(135deg, #ff8a65 0%, #ff7d64 100%);  /* 稍微亮一点的珊瑚色 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 活跃状态的按钮 */
+.mode-btn.active {
+    background: linear-gradient(135deg, #ff6347 0%, #ff5233 100%);  /* 番茄红色 */
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 重置按钮特殊样式 */
+.reset-button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
-    flex: 0 0 auto;
 }
 
 /* Game board */
@@ -103,29 +141,56 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 1px;
-    background-color: #808080;
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
+    gap: 2px;
+    background-color: #1c2642;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
     min-height: 0;
     aspect-ratio: 1;
+    width: 100%;
+    max-width: 100%;
     max-height: 100%;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
 }
 
 .cell {
     aspect-ratio: 1;
-    background-color: #c0c0c0;
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
+    background: linear-gradient(135deg, #2d3d68 0%, #26345A 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'MiSansEN', monospace;
-    font-size: clamp(12px, 2.5vw, 20px);
+    font-size: clamp(12px, 2vw, 20px);
     font-weight: 900;
     cursor: pointer;
     user-select: none;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
     max-height: 100%;
+    transition: background-color 0.2s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+.cell:hover {
+    background: linear-gradient(135deg, #344677 0%, #2d3d68 100%);
+}
+
+.cell.revealed {
+    background: linear-gradient(135deg, #1c2642 0%, #26345A 100%);
+    color: white;
+    font-size: clamp(20px, 3vw, 24px); /* 增加字体大小 */
+    font-weight: bold; /* 加粗字体 */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
 }
 
 /* Instructions */
@@ -146,17 +211,28 @@ body {
 }
 
 .mode-btn {
-    padding: clamp(4px, 1vw, 8px) clamp(8px, 2vw, 16px);
-    font-size: clamp(12px, 3vw, 14px);
-    background-color: #c0c0c0;
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #2d3d68 0%, #26345A 100%);
+    border: none;
+    border-radius: 6px;
+    color: white;
     cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mode-btn:hover {
+    background-color: #344677;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .mode-btn.active {
-    background-color: #a0a0a0;
-    border-color: #808080 #fff #fff #808080;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive adjustments */
@@ -170,30 +246,37 @@ body {
     }
 
     .cell {
-        font-size: min(1.2rem, 5vw);
+        font-size: min(2rem, 10vw);
     }
 }
 
 /* Ensure proper sizing for revealed cells */
 .cell.revealed {
-    border-width: 1px;
-    border-style: solid;
+    background-color: #c0c0c0;
     border-color: #808080;
+    border: 0.5px solid #808080;
+    font-size: clamp(14px, 3vw, 24px);
+}
+
+.cell.revealed[data-mine="true"] {
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
 
 /* Number colors */
-.cell[data-mines="1"] { color: blue; }
-.cell[data-mines="2"] { color: green; }
-.cell[data-mines="3"] { color: red; }
-.cell[data-mines="4"] { color: darkblue; }
-.cell[data-mines="5"] { color: darkred; }
-.cell[data-mines="6"] { color: teal; }
-.cell[data-mines="7"] { color: black; }
-.cell[data-mines="8"] { color: gray; }
+.cell[data-mines="1"] { color: #74b9ff; }
+.cell[data-mines="2"] { color: #55efc4; }
+.cell[data-mines="3"] { color: #ff7675; }
+.cell[data-mines="4"] { color: #a29bfe; }
+.cell[data-mines="5"] { color: #fab1a0; }
+.cell[data-mines="6"] { color: #81ecec; }
+.cell[data-mines="7"] { color: #ffeaa7; }
+.cell[data-mines="8"] { color: #fd79a8; }
 
 #winMessage, #loseMessage {
     position: absolute;
-    top: 0;
+    top: 25%;
     left: 0;
     width: 100%;
     height: 100%;
@@ -201,22 +284,30 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(38, 52, 90, 0.5);
+    backdrop-filter: none;
+    padding: 30px;
+    border-radius: 12px;
+    z-index: 9999;
 }
 
 .restart-btn {
-    background-color: #444;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    background-color: #2d3d68;
+    border: none;
+    border-radius: 6px;
     color: white;
-    border: 2px solid #666;
-    padding: 8px 16px;
-    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .restart-btn:hover {
-    background-color: #555;
+    background-color: #344677;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes explode {
@@ -332,7 +423,7 @@ body {
     margin-top: 15px;
 }
 
-.mode-btn {
+/* .mode-btn {
     padding: 8px 16px;
     font-size: 1rem;
     background-color: #c0c0c0;
@@ -348,7 +439,7 @@ body {
 .mode-btn.active {
     background-color: #a0a0a0;
     border-color: #808080 #fff #fff #808080;
-}
+} */
 
 /* Show mode toggle only on mobile */
 @media (max-width: 768px) {
@@ -357,80 +448,58 @@ body {
     }
 }
 
-/* Info page styles */
+/* Info page 背景 */
 .info-page {
-    width: 100%;
-    min-height: 100vh;
+    background: linear-gradient(135deg, rgba(38, 52, 90, 0.95) 0%, rgba(26, 37, 68, 0.95) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    min-height: 100vh;
 }
 
+/* 資訊容器樣式 */
 .info-container {
-    width: min(100%, 600px);
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 10px;
-    padding: 30px;
+    position: relative;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    width: 800px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    text-align: center;
+    background: url('image/poster_HPV.jpeg') center/cover no-repeat;  /* 直接設置為背景圖 */
 }
 
-.info-section {
+/* 添加遮罩層 */
+.info-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(38, 52, 90, 0.9);  /* 深藍色遮罩 */
+    border-radius: 15px;
+}
+
+/* 確保內容在遮罩層上方 */
+.info-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+/* 文字樣式 */
+.info-container h1,
+.info-container p,
+.info-container .input-group,
+.info-container button {
     color: white;
-    margin-bottom: 20px;
-}
-
-.info-section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #c0c0c0;
-}
-
-.info-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.info-section li {
-    margin-bottom: 10px;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-}
-
-.input-group input {
-    width: 80%;
-    max-width: 300px;
-    text-align: center;
-}
-
-.error-message {
-    color: #ff4444;
-    font-size: 0.9rem;
-    min-height: 20px;
-    margin: 5px 0;
-}
-
-.start-btn {
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    background-color: #c0c0c0;
-    border: 3px solid;
-    border-color: #fff #808080 #808080 #fff;
-    cursor: pointer;
-    font-family: 'MiSansCH', Arial, sans-serif;
-    margin-top: 10px;
-}
-
-.start-btn:hover {
-    background-color: #d0d0d0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    margin: 10px 0;
 }
 
 .ad-container {
@@ -469,8 +538,13 @@ body {
     border-color: #fff #808080 #808080 #fff;
     cursor: pointer;
     font-family: 'Noto Sans TC', sans-serif;
-    margin: 20px auto;
-    border-radius: 8px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20%;
+    white-space: nowrap;
+    z-index: 1001;
+    margin-top: 20px;
 }
 
 .watch-ad-btn:hover {
@@ -524,43 +598,40 @@ body {
     width: 100%;
     overflow: hidden;
     margin-top: 20px;
+    position: relative;
+    aspect-ratio: 1200/300;
 }
 
 .banner-container {
-    display: flex;
-    width: 300%;  /* 只需要三張圖片的寬度 */
-    transition: transform 0.5s ease;
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 .banner-link {
-    width: 33.333%;  /* 每個 banner 佔三分之一 */
-    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
 }
 
 .banner-image {
     width: 100%;
-    height: auto;
-    display: block;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+    transform: translateZ(0);
 }
 
-/* 修改響應式設計 */
+/* 響應式調整 */
 @media (max-width: 768px) {
-    .desktop-instruction {
-        display: none;
-    }
-    
-    .mode-toggle {
-        display: flex;
-    }
-
     .banner-ad {
-        margin-top: 10px;
-        padding: 5px 0;
-    }
-
-    .banner-image {
-        max-height: 80px;
+        aspect-ratio: 1200/400;
     }
 }
 
@@ -573,17 +644,16 @@ body {
     }
 
     .game-container {
-        max-height: calc(100vh - 200px);
+        max-height: min(calc(100vh - 200px), calc(100vw + 80px));
     }
 
-    .banner-ad {
-        margin-top: 10px;
+    #gameBoard {
+        width: 100%;
+        max-width: 100%;
     }
 
-    /* 調整按鈕大小 */
-    .mode-btn {
-        padding: 6px 12px;
-        font-size: 14px;
+    .cell {
+        font-size: clamp(8px, 2.5vw, 14px);
     }
 }
 
@@ -614,14 +684,405 @@ body {
     }
 
     .cell {
-        font-size: clamp(8px, 2.5vw, 14px);
+        font-size: clamp(6px, 2vw, 12px);
     }
 }
 
-/* 確保在較高螢幕上的顯示 */
+/* 保在較高螢幕上的顯示 */
 @media (min-height: 800px) {
-    .game-wrapper {
-        gap: 20px;
+    .game-container {
+        max-height: min(calc(100vh - 300px), calc(100vw + 120px));
     }
+}
+
+.lottery-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1002;
+    text-align: center;
+}
+
+.lottery-image {
+    max-width: 80%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.lottery-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red;
+    font-size: 50px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    white-space: nowrap;
+    text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.5),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.close-lottery-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1003;
+    transition: transform 0.3s ease;
+}
+
+.close-lottery-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+}
+
+/* 在小螢幕上的響應式調整 */
+@media (max-height: 700px) {
+    .info-container {
+        height: 90vh;
+        width: calc(90vh * 0.714);
+    }
+}
+
+.info-container h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 第一個 h1 的下方間距 */
+.info-container h1:first-of-type {
+    margin-top: 80px;
+    margin-bottom: -5px;
+}
+
+.info-container h1:last-of-type {
+    margin-bottom: 100px;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .info-container h1 {
+        font-size: 1.3rem;
+    }
+}
+
+/* 調整內文字體大小 */
+.info-section p {
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: 1rem;  /* 縮小字體大小 */
+    margin: 5px 0;  /* 調整行間距 */
+    white-space: nowrap;  /* 防止換行 */
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .info-section p {
+        font-size: 0.9rem;  /* 在手機版上更小 */
+    }
+}
+
+/* 在特小螢幕上的調整 */
+@media (max-width: 320px) {
+    .info-section p {
+        font-size: 0.8rem;  /* 在更小的螢幕上進步縮小 */
+    }
+}
+
+/* 為了確保在不同螢幕尺寸下的響應式表現 */
+@media (max-height: 600px) {
+    .watch-ad-btn {
+        bottom: 15%;  /* 在較小的螢幕上調整位置 */
+        font-size: 1rem;  /* 縮小字體 */
+        padding: 8px 16px;  /* 縮小按鈕 */
+    }
+}
+
+/* 在特小螢幕上的調整 */
+@media (max-height: 400px) {
+    .watch-ad-btn {
+        bottom: 10%;
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+}
+
+#loseMessage h2 {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 20px 0;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    padding: 0 15px;
+    line-height: 1.4;
+    max-width: 90%;
+    display: none; /* 預設隱藏所有訊息 */
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    #loseMessage h2 {
+        font-size: 0.9rem;
+        margin: 10px 0;
+    }
+}
+
+/* 在特小螢幕上的調整 */
+@media (max-width: 320px) {
+    #loseMessage h2 {
+        font-size: 0.8rem;
+        margin: 6px 0;
+    }
+}
+
+/* 添加疫苗圖片的樣式 */
+.vaccine-image {
+    position: absolute;
+    top: 43%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130px;
+    height: auto;
+    z-index: 10000;
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    display: none;
+}
+
+/* 只在遊戲結束訊息顯示時才顯示疫苗圖片 */
+#winMessage:not([style*="display: none"]) ~ .vaccine-image,
+#loseMessage:not([style*="display: none"]) ~ .vaccine-image {
+    display: block;
+    animation: vaccineAppear 0.5s ease-out forwards;
+}
+
+@keyframes vaccineAppear {
+    from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* 调整消息框层级 */
+#winMessage, #loseMessage {
+    z-index: 9999;
+}
+
+/* 调整输入框区域的样式 */
+.info-section .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;  /* 增加与按钮的间距 */
+    width: 100%;
+    max-width: 300px;
+    position: relative;
+    z-index: 2;  /* 确保输入在上层 */
+}
+
+.info-section input[type="text"] {
+    padding: 8px 12px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* 手机版特别调整 */
+@media (max-width: 768px) {
+    .info-container {
+        justify-content: flex-start;  /* 从顶部开始排列 */
+        padding-top: 40px;  /* 增加顶部间距 */
+    }
+    
+    .info-section {
+        margin-bottom: 30px;  /* 增加底部间距 */
+    }
+    
+    .start-btn {
+        position: fixed;  /* 固定在底部 */
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        min-width: 200px;
+        z-index: 1;
+    }
+}
+
+/* 在特小螢幕上的調整 */
+@media (max-height: 600px) {
+    .info-container {
+        padding-top: 20px;
+    }
+    
+    .info-section {
+        margin-bottom: 20px;
+    }
+    
+    .start-btn {
+        bottom: 10px;
+    }
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.learn-more-btn, .restart-game-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #c0c0c0;
+    border: 3px solid;
+    border-color: #fff #808080 #808080 #fff;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    white-space: nowrap;
+}
+
+.learn-more-btn:hover, .restart-game-btn:hover {
+    background-color: #d0d0d0;
+}
+
+/* 手机版按钮调整 */
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .learn-more-btn, .restart-game-btn {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-container {
+        padding: 30px 15px 15px;
+    }
+    
+    .info-container h1 {
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
+        line-height: 1.3;
+    }
+    
+    .info-section {
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-container {
+        padding: 20px 10px 10px;
+    }
+    
+    .info-section p {
+        font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+    }
+    
+    .start-btn {
+        padding: 8px 16px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-height: 600px) {
+    .info-container {
+        gap: 10px;
+    }
+    
+    .info-section {
+        gap: 5px;
+    }
+}
+
+.cell.flagged {
+    background-color: #344677;
+}
+
+@media (max-width: 768px) {
+    .info-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .info-section {
+        padding: 0 10px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* 确保输入框居中 */
+        width: 100%;
+    }
+
+    .input-group input {
+        width: 80%; /* 调整输入框宽度 */
+        max-width: 300px;
+    }
+
+    .start-btn {
+        width: 80%; /* 调整按钮宽度 */
+        max-width: 300px;
+        margin: 20px auto 0; /* 确保按钮居中 */
+    }
+}
+
+/* 特别针对游戏结束消息中的按钮 */
+#winMessage .restart-btn,
+#loseMessage .restart-btn,
+#loseMessage .learn-more-btn,
+#loseMessage .restart-game-btn {
+    background-color: #2d3d68;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+#winMessage .restart-btn:hover,
+#loseMessage .restart-btn:hover,
+#loseMessage .learn-more-btn:hover,
+#loseMessage .restart-game-btn:hover {
+    background-color: #344677;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
   
