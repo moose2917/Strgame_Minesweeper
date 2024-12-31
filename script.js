@@ -24,7 +24,7 @@ const mineImages = ['😞', '🍑', '🐲', '🎤', '🙇‍♂️'];
 
 const MINE_MESSAGES = {
     '😞': "對不起<br><span style='font-size: 0.8em'>喜劇演員不該嘻嘻哈哈</span>",
-    '🍑': "對不起<br><span style='font-size: 0.8em'>我應該好好講話</span>",
+    '🍑': "對不起<br><span style='font-size: 0.8em'>我應該好好說話</span>",
     '🐲': "對不起<br><span style='font-size: 0.8em'>我不知道為什麼要對不起</span>",
     '🎤': "對不起<br><span style='font-size: 0.8em'>喜劇演員應該要承擔更多社會責任</span>",
     '🙇‍♂️': "對不起<br><span style='font-size: 0.8em'>目前還沒有做錯什麼，但我先道歉以備不時之需</span>"
@@ -278,7 +278,7 @@ function checkWin() {
     winMessage.style.top = '50%';
     winMessage.style.left = '50%';
     winMessage.style.transform = 'translate(-50%, -50%)';
-    winMessage.style.background = 'rgba(0, 0, 0, 0.9)';
+    winMessage.style.background = 'rgba(0, 0, 0, 0.5)';
     winMessage.style.padding = '40px';
     winMessage.style.borderRadius = '10px';
     winMessage.style.color = 'white';
@@ -730,14 +730,14 @@ function gameOver(row, col) {
         }
     });
     
-    // Display lose message with the touched mine
+    // Display lose message
     const loseMessage = document.createElement('div');
     loseMessage.id = 'loseMessage';
     loseMessage.style.position = 'fixed';
     loseMessage.style.top = '50%';
     loseMessage.style.left = '50%';
     loseMessage.style.transform = 'translate(-50%, -50%)';
-    loseMessage.style.background = 'rgba(0, 0, 0, 0.9)';
+    loseMessage.style.background = 'rgba(0, 0, 0, 0.7)';
     loseMessage.style.padding = '40px';
     loseMessage.style.borderRadius = '10px';
     loseMessage.style.color = 'white';
