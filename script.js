@@ -20,12 +20,15 @@ const EMOJI_STATES = {
 };
 
 // 在文件開頭添加圖片陣列
-const mineImages = [
-    'image/bump_bedroom.png',
-    'image/bump_hot-spring.png',
-    'image/bump_swimming-pool.png',
-    'image/bump_vaccine.png'
-];
+const mineImages = ['😞', '🍑', '🐲', '🎤', '🙇‍♂️'];
+
+const MINE_MESSAGES = {
+    '😞': "對不起，喜劇演員不該嘻嘻哈哈",
+    '🍑': "對不起，我應該好好講話",
+    '🐲': "對不起，我不知道為什麼要對不起",
+    '🎤': "對不起，喜劇演員應該要承擔更多社會責任",
+    '🙇‍♂️': "對不起，目前還沒有做錯什麼，但我先道歉以備不時之需"
+};
 
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
@@ -49,18 +52,24 @@ function updateDeviceSpecificElements() {
 }
 
 function initializeGame() {
+    console.log('Initializing game...');
+    
+    // Remove any existing win/lose messages
+    const winMessage = document.getElementById('winMessage');
+    const loseMessage = document.getElementById('loseMessage');
+    if (winMessage) winMessage.remove();
+    if (loseMessage) loseMessage.remove();
+    
     clearInterval(timer);
     seconds = 0;
     remainingMines = mineCount;
     gameStarted = false;
     
-    document.querySelector('.reset-button').textContent = EMOJI_STATES.NORMAL;
     document.querySelector('.mine-counter').textContent = String(remainingMines).padStart(3, '0');
+    document.querySelector('.reset-button').textContent = EMOJI_STATES.NORMAL;
     document.querySelector('.timer').textContent = '00:00';
     
-    document.getElementById('winMessage').style.display = 'none';
-    document.getElementById('loseMessage').style.display = 'none';
-    
+    // Initialize board array
     board = Array.from({ length: gridSize }, () => 
         Array(gridSize).fill().map(() => ({
             mine: false,
@@ -73,7 +82,13 @@ function initializeGame() {
     
     minePositions = [];
     
-    const gameBoard = document.getElementById("gameBoard");
+    // Create game board cells
+    const gameBoard = document.getElementById('gameBoard');
+    if (!gameBoard) {
+        console.error('找不到遊戲板元素');
+        return;
+    }
+    
     gameBoard.classList.remove('burning');
     gameBoard.innerHTML = '';
     
@@ -87,7 +102,7 @@ function initializeGame() {
         });
     });
     
-    // Update cell click handlers for mobile
+    // Create cells
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             const cell = document.createElement("div");
@@ -95,8 +110,8 @@ function initializeGame() {
             cell.dataset.row = row;
             cell.dataset.col = col;
             
-            // Single click handler for mobile
-            cell.addEventListener('click', (e) => {
+            // Add click handlers
+            cell.addEventListener('click', () => {
                 if (currentMode === 'dig') {
                     revealCell(row, col);
                 } else {
@@ -104,7 +119,7 @@ function initializeGame() {
                 }
             });
             
-            // Keep right-click for desktop
+            // Add right-click handler for flagging
             cell.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 toggleFlag(row, col);
@@ -114,6 +129,7 @@ function initializeGame() {
         }
     }
     
+    // Place mines after creating cells
     placeMines();
     calculateAdjacentMines();
     
@@ -172,31 +188,38 @@ function getNeighbors(row, col) {
 function revealCell(row, col) {
     if (board[row][col].revealed || board[row][col].flagged) return;
     
+    // Start timer on first click
     if (!gameStarted) {
         gameStarted = true;
-        startTimer();
+        timer = setInterval(() => {
+            seconds++;
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            document.querySelector('.timer').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }, 1000);
+    }
+    
+    if (board[row][col].mine) {
+        gameOver(row, col);
+        return;
     }
     
     board[row][col].revealed = true;
-    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
     cell.classList.add('revealed');
     
-    if (board[row][col].mine) {
-        cell.style.backgroundImage = `url('${board[row][col].mineImage}')`;
-        cell.style.backgroundSize = 'contain';
-        cell.style.backgroundPosition = 'center';
-        cell.style.backgroundRepeat = 'no-repeat';
-        handleGameLose(cell);
-        gameOver();
-    } else if (board[row][col].adjacentMines > 0) {
+    if (board[row][col].adjacentMines > 0) {
         cell.textContent = board[row][col].adjacentMines;
         cell.dataset.mines = board[row][col].adjacentMines;
     } else {
+        // Reveal adjacent cells
         getNeighbors(row, col).forEach(([r, c]) => {
             if (!board[r][c].revealed) revealCell(r, c);
         });
     }
     
+    // Check for win after successful reveal
     checkWin();
 }
 
@@ -236,41 +259,33 @@ function toggleFlag(row, col) {
 }
 
 function checkWin() {
-    let allNonMinesRevealed = true;
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             if (!board[row][col].mine && !board[row][col].revealed) {
-                allNonMinesRevealed = false;
-                break;
+                return false;
             }
         }
     }
     
-    if (allNonMinesRevealed) {
-        clearInterval(timer);
-        document.querySelector('.reset-button').textContent = EMOJI_STATES.SMILE;
-        
-        // 顯示所有地雷，使用隨機圖片
-        minePositions.forEach(([row, col]) => {
-            const mineCell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-            mineCell.classList.add('revealed');
-            // 使用該位置已分配的圖片
-            mineCell.style.backgroundImage = `url('${board[row][col].mineImage}')`;
-            mineCell.style.backgroundSize = 'contain';
-            mineCell.style.backgroundPosition = 'center';
-            mineCell.style.backgroundRepeat = 'no-repeat';
-        });
-        
-        const winMessage = document.getElementById('winMessage');
-        winMessage.style.display = 'flex';
-        winMessage.style.flexDirection = 'column';
-        
-        // 显示疫苗图片
-        const vaccineImage = document.getElementById('vaccineImage');
-        if (vaccineImage) {
-            vaccineImage.style.display = 'block';
-        }
-    }
+    // Display win message
+    const winMessage = document.createElement('div');
+    winMessage.id = 'winMessage';
+    winMessage.style.position = 'fixed';
+    winMessage.style.top = '50%';
+    winMessage.style.left = '50%';
+    winMessage.style.transform = 'translate(-50%, -50%)';
+    winMessage.style.background = 'rgba(0, 0, 0, 0.9)';
+    winMessage.style.padding = '20px';
+    winMessage.style.borderRadius = '10px';
+    winMessage.style.color = 'white';
+    winMessage.style.textAlign = 'center';
+    winMessage.style.zIndex = '1000';
+    winMessage.innerHTML = `
+        <h2>恭喜你又讓賀瓏度過平安的一集!</h2>
+        <button onclick="initializeGame()" class="restart-btn">再玩一次</button>
+    `;
+    document.body.appendChild(winMessage);
+    return true;
 }
 
 // Reset mode when starting new game
@@ -301,19 +316,68 @@ function validateAndStartGame() {
     playerName = name;
     errorElement.textContent = '';
     
-    // 隱藏信息頁面
-    const infoPage = document.getElementById('infoPage');
-    infoPage.style.display = 'none';
-    console.log('Info page hidden');
+    // Clear main content but keep the structure
+    const main = document.querySelector('main');
+    main.style.height = '80vh';
+    main.className = 'game-page-main';
+    main.innerHTML = `
+        <section class="gameplay-section">
+            <div class="game-wrapper">
+                <div class="game-container">
+                    <div class="status-bar">
+                        <div class="mine-counter">010</div>
+                        <button class="reset-button">🙂</button>
+                        <div class="timer">00:00</div>
+                    </div>
+                    <div id="gameBoard"></div>
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" data-mode="dig">⛏️挖掘</button>
+                        <button class="mode-btn" data-mode="flag">🚩標記</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="game-ad-section">
+            <img src="image/TNNS_Banner.png" alt="TNNS Banner" class="ad-banner">
+        </section>
+    `;
     
-    // 顯示遊戲界面
-    const gameWrapper = document.getElementById('gameWrapper');
-    gameWrapper.style.display = 'block';
-    console.log('Game wrapper displayed');
-    
-    // 重新初始化遊戲
-    initializeGame();
-    console.log('Game initialized');
+    setTimeout(() => {
+        initializeGame();
+        setupEventListeners();
+    }, 0);
+}
+
+function setupEventListeners() {
+    // Mode toggle buttons
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            // Remove active class from all buttons
+            modeButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            button.classList.add('active');
+            // Update current mode
+            currentMode = button.dataset.mode;
+        });
+
+        // Add touch event listeners for mobile
+        button.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Prevent default touch behavior
+            // Remove active class from all buttons
+            modeButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to touched button
+            button.classList.add('active');
+            // Update current mode
+            currentMode = button.dataset.mode;
+        });
+    });
+
+    // Add reset button handler
+    const resetButton = document.querySelector('.reset-button');
+    if (resetButton) {
+        resetButton.addEventListener('click', initializeGame);
+    }
 }
 
 function handleGameLose(clickedCell) {
@@ -530,33 +594,24 @@ function initBannerRotation() {
     let currentIndex = 0;
     let lastRotationTime = Date.now();
     
-    // 隱藏所有圖片
     bannerLinks.forEach(banner => {
         banner.style.display = 'none';
     });
     
-    // 顯示第一張圖片
-    bannerLinks[0].style.display = 'block';
+    if (bannerLinks.length > 0) {
+        bannerLinks[0].style.display = 'block';
+    }
     
     function rotateBanner() {
         const currentTime = Date.now();
-        // 確保距離上次切換已經過了5秒
         if (currentTime - lastRotationTime >= 5000) {
-            // 隱藏當前圖片
             bannerLinks[currentIndex].style.display = 'none';
-            
-            // 更新索引，確保按照順序顯示
             currentIndex = (currentIndex + 1) % bannerLinks.length;
-            
-            // 顯示下一張圖片
             bannerLinks[currentIndex].style.display = 'block';
-            
-            // 更新上次切換時間
             lastRotationTime = currentTime;
         }
     }
     
-    // 每100毫秒檢查一次是否需要切換圖片
     setInterval(rotateBanner, 100);
 }
 
@@ -578,43 +633,97 @@ document.addEventListener('DOMContentLoaded', function() {
     // 添加開始遊戲按鈕的事件監聽器
     const startGameBtn = document.getElementById('startGameBtn');
     if (startGameBtn) {
-        startGameBtn.addEventListener('click', validateAndStartGame);
-        console.log('Start game button listener added');
-    }
-    
-    // 添加輸入框的 Enter 鍵支持
-    const playerNameInput = document.getElementById('playerName');
-    if (playerNameInput) {
-        playerNameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                validateAndStartGame();
-            }
+        startGameBtn.addEventListener('click', function() {
+            console.log('Start button clicked');
+            // Replace main content with game interface
+            const main = document.querySelector('main');
+            main.style.height = '80vh';
+            main.className = 'game-page-main';
+            main.innerHTML = `
+                <section class="gameplay-section">
+                    <div class="game-wrapper">
+                        <div class="game-container">
+                            <div class="status-bar">
+                                <div class="mine-counter">010</div>
+                                <button class="reset-button">🙂</button>
+                                <div class="timer">00:00</div>
+                            </div>
+                            <div id="gameBoard"></div>
+                            <div class="mode-toggle">
+                                <button class="mode-btn active" data-mode="dig">⛏️挖掘</button>
+                                <button class="mode-btn" data-mode="flag">🚩標記</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            // Initialize the game
+            setTimeout(() => {
+                initializeGame();
+                setupEventListeners();
+            }, 0);
         });
     }
     
     // 更新設備特定元素
     updateDeviceSpecificElements();
     
-    // 確保頁面加載完成後始化輪播
-    initBannerRotation();
+    // Initialize banner rotation if it exists
+    if (document.querySelector('.banner-link')) {
+        initBannerRotation();
+    }
 });
 
+// Simplified start game function
+function startGame() {
+    const gameWrapper = document.getElementById('gameWrapper');
+    const infoPage = document.getElementById('infoPage');
+    
+    if (gameWrapper && infoPage) {
+        infoPage.style.display = 'none';
+        gameWrapper.style.display = 'flex';
+        // Add any additional game initialization logic here
+    }
+}
+
 // 修改 gameOver 函數，顯示所有地雷時也使用隨機圖片
-function gameOver() {
+function gameOver(row, col) {
     clearInterval(timer);
     document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
     
-    // 顯示所有地雷
-    minePositions.forEach(([row, col]) => {
-        const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-        if (!board[row][col].revealed) {
-            cellElement.style.backgroundImage = `url('${board[row][col].mineImage}')`;
-            cellElement.style.backgroundSize = 'contain';
-            cellElement.style.backgroundPosition = 'center';
-            cellElement.style.backgroundRepeat = 'no-repeat';
+    // Get the clicked mine's emoji and message
+    const clickedMineEmoji = board[row][col].mineImage;
+    const message = MINE_MESSAGES[clickedMineEmoji] || "遊戲結束!";
+    
+    // Show all mines
+    minePositions.forEach(([r, c]) => {
+        const cellElement = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+        if (!board[r][c].revealed) {
+            cellElement.textContent = board[r][c].mineImage;
+            cellElement.style.fontSize = '16px';
             cellElement.classList.add('revealed');
         }
     });
     
-    handleGameLose();
+    // Display lose message with the touched mine
+    const loseMessage = document.createElement('div');
+    loseMessage.id = 'loseMessage';
+    loseMessage.style.position = 'fixed';
+    loseMessage.style.top = '50%';
+    loseMessage.style.left = '50%';
+    loseMessage.style.transform = 'translate(-50%, -50%)';
+    loseMessage.style.background = 'rgba(0, 0, 0, 0.9)';
+    loseMessage.style.padding = '20px';
+    loseMessage.style.borderRadius = '10px';
+    loseMessage.style.color = 'white';
+    loseMessage.style.textAlign = 'center';
+    loseMessage.style.zIndex = '1000';
+    
+    loseMessage.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 10px;">${clickedMineEmoji}</div>
+        <h2>${message}</h2>
+        <button onclick="initializeGame()" class="restart-btn">重新開始</button>
+    `;
+    document.body.appendChild(loseMessage);
 }

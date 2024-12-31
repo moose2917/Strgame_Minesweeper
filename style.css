@@ -1,3 +1,4 @@
+/* Font faces */
 @font-face {
     font-family: 'MiSansEN';
     src: url('font/EN/MiSans-Normal.ttf') format('truetype');
@@ -20,486 +21,225 @@
 }
 
 body {
-    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
-    color: white;
     min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    flex-direction: column;
+    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
 }
 
-/* Main container */
-.game-wrapper {
-    width: min(100%, 500px);
+/* Layout components */
+header {
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #151b31;
+    overflow: hidden;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Add gradient overlay to header */
+header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(21, 27, 49, 0.8) 0%,
+        rgba(21, 27, 49, 0.4) 100%
+    );
+    pointer-events: none;
+}
+
+/* Adjust header image */
+header img {
+    max-width: 50%;
+    height: 8vh;
+    width: auto;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+main {
+    width: 100%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: clamp(10px, 2vh, 15px);
-    padding: clamp(10px, 2vw, 20px);
+    justify-content: space-between;
+    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
+    min-height: 80vh;
+    padding: 2rem 1rem;
 }
 
-/* Logo and title */
-.header {
+footer {
     width: 100%;
-    text-align: center;
+    height: 5vh;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #151b31;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
-.game-logo {
-    width: clamp(150px, 30vw, 200px);
-    height: auto;
-    margin: 0 auto;
+/* Add gradient overlay to footer */
+footer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        rgba(21, 27, 49, 0.8) 0%,
+        rgba(21, 27, 49, 0.4) 100%
+    );
+    pointer-events: none;
 }
 
-/* Game container */
+/* Style footer text */
+footer p {
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Game components */
+.game-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: rgba(38, 52, 90, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+}
+
 .game-container {
     width: 100%;
-    background: linear-gradient(135deg, rgba(45, 61, 104, 0.9) 0%, rgba(38, 52, 90, 0.8) 100%);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    max-width: 420px;
+    height: 150%;
     display: flex;
     flex-direction: column;
-    gap: clamp(5px, 1vw, 10px);
-    position: relative;
-    max-height: min(calc(100vh - 250px), calc(100vw + 100px));
-    overflow: hidden;
-}
-
-/* Status bar */
-.status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(to right, #2d3d68, #344677);
-    padding: 12px;
-    margin-bottom: 8px;
+    gap: 5px;
+    padding: 10px 15px;
+    background: rgba(26, 37, 68, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
 }
 
-.mine-counter, .timer {
-    background: linear-gradient(135deg, #1c2642 0%, #26345A 100%);
-    color: #ff4757;
-    padding: 4px 8px;
-    font-family: 'Digital-7', monospace;
-    font-size: clamp(16px, 4vw, 20px);
-    min-width: 54px;
-    text-align: center;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-family: 'Digital-7', monospace;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-    text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
-}
-
-/* 统一按钮基础样式 */
-.mode-btn, .reset-button, .restart-btn, .learn-more-btn, .restart-game-btn, .start-btn, .watch-ad-btn {
-    background: linear-gradient(135deg, #ff7f50 0%, #ff6b3d 100%);  /* 珊瑚色渐变 */
+.game-title {
     color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* 统一按钮悬停效果 */
-.mode-btn:hover, .reset-button:hover, .restart-btn:hover, 
-.learn-more-btn:hover, .restart-game-btn:hover, .start-btn:hover, .watch-ad-btn:hover {
-    background: linear-gradient(135deg, #ff8a65 0%, #ff7d64 100%);  /* 稍微亮一点的珊瑚色 */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* 活跃状态的按钮 */
-.mode-btn.active {
-    background: linear-gradient(135deg, #ff6347 0%, #ff5233 100%);  /* 番茄红色 */
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* 重置按钮特殊样式 */
-.reset-button {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 1.8rem;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
 }
 
 /* Game board */
 #gameBoard {
-    flex: 1;
+    width: 100%;
+    aspect-ratio: 1;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     gap: 2px;
-    background-color: #1c2642;
-    border: none;
-    border-radius: 8px;
-    overflow: hidden;
-    min-height: 0;
-    aspect-ratio: 1;
-    width: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
+    padding: 2px;
+    background-color: rgba(26, 37, 68, 0.9);
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .cell {
+    width: 100%;
     aspect-ratio: 1;
-    background: linear-gradient(135deg, #2d3d68 0%, #26345A 100%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #2a3a6a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 4px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'MiSansEN', monospace;
-    font-size: clamp(12px, 2vw, 20px);
-    font-weight: 900;
-    cursor: pointer;
-    user-select: none;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    transition: background-color 0.2s ease;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: transform;
-}
-
-.cell:hover {
-    background: linear-gradient(135deg, #344677 0%, #2d3d68 100%);
-}
-
-.cell.revealed {
-    background: linear-gradient(135deg, #1c2642 0%, #26345A 100%);
+    font-size: 14px;
+    font-weight: bold;
     color: white;
-    font-size: clamp(20px, 3vw, 24px); /* 增加字体大小 */
-    font-weight: bold; /* 加粗字体 */
-    -webkit-font-smoothing: antialiased;
-    text-rendering: geometricPrecision;
-}
-
-/* Instructions */
-.instruction {
-    width: 100%;
-    text-align: center;
-    font-size: min(1rem, 4vw);
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Mode toggle for mobile */
-.mode-toggle {
-    display: none;
-    gap: clamp(5px, 1vw, 10px);
-}
-
-.mode-btn {
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    background: linear-gradient(135deg, #2d3d68 0%, #26345A 100%);
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.mode-btn:hover {
-    background-color: #344677;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.mode-btn.active {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive adjustments */
-@media (max-width: 500px) {
-    body {
-        padding: 10px;
-    }
-
-    .game-wrapper {
-        width: 100%;
-    }
-
-    .cell {
-        font-size: min(2rem, 10vw);
-    }
-}
-
-/* Ensure proper sizing for revealed cells */
-.cell.revealed {
-    background-color: #c0c0c0;
-    border-color: #808080;
-    border: 0.5px solid #808080;
-    font-size: clamp(14px, 3vw, 24px);
-}
-
-.cell.revealed[data-mine="true"] {
-    background-size: contain !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
-
-/* Number colors */
-.cell[data-mines="1"] { color: #74b9ff; }
-.cell[data-mines="2"] { color: #55efc4; }
-.cell[data-mines="3"] { color: #ff7675; }
-.cell[data-mines="4"] { color: #a29bfe; }
-.cell[data-mines="5"] { color: #fab1a0; }
-.cell[data-mines="6"] { color: #81ecec; }
-.cell[data-mines="7"] { color: #ffeaa7; }
-.cell[data-mines="8"] { color: #fd79a8; }
-
-#winMessage, #loseMessage {
-    position: absolute;
-    top: 25%;
-    left: 0;
+/* Game status */
+.status-bar {
     width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    background: rgba(38, 52, 90, 0.5);
-    backdrop-filter: none;
-    padding: 30px;
+    padding: 10px 15px;
+    background: rgba(26, 37, 68, 0.9);
     border-radius: 12px;
-    z-index: 9999;
+    margin-bottom: 10px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.restart-btn {
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    background-color: #2d3d68;
-    border: none;
+.mine-counter, .timer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
     border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.restart-btn:hover {
-    background-color: #344677;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes explode {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(0.8);
-        opacity: 0.3;
-    }
-}
-
-.exploded {
-    animation: explode 0.5s ease-in-out;
-}
-
-@keyframes burn {
-    0% {
-        background: linear-gradient(0deg, 
-            rgba(255, 87, 34, 0) 0%,
-            rgba(255, 87, 34, 0) 100%);
-    }
-    50% {
-        background: linear-gradient(0deg,
-            rgba(255, 87, 34, 0.8) 0%,
-            rgba(255, 193, 7, 0.6) 50%,
-            rgba(255, 87, 34, 0) 100%);
-    }
-    100% {
-        background: linear-gradient(0deg,
-            rgba(255, 87, 34, 0) 0%,
-            rgba(255, 87, 34, 0) 100%);
-    }
-}
-
-@keyframes flicker {
-    0% { opacity: 1; }
-    25% { opacity: 0.8; }
-    50% { opacity: 0.9; }
-    75% { opacity: 0.7; }
-    100% { opacity: 1; }
-}
-
-.burning {
-    position: relative;
-    overflow: hidden;
-}
-
-.burning::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    animation: burn 2s ease-in-out infinite,
-               flicker 0.5s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.cell.revealed.mine {
-    background-color: #919191;
-    font-size: clamp(0.8rem, 1.8vw, 1.2rem);
-    position: relative;
-    z-index: 2;
-}
-
-/* Ensure proper scaling on mobile devices */
-@media (max-width: 768px) {
-    .game-wrapper {
-        width: min(95vw, 95vh, 450px);
-    }
-
-    .cell {
-        font-size: clamp(1rem, 1.8vw, 1.3rem);
-    }
-}
-
-/* iPhone-specific adjustments */
-@media (max-width: 390px) {
-    .status-bar {
-        grid-template-columns: 75px 1fr 75px;
-    }
-
-    .mine-counter, .timer {
-        font-size: 1.3rem;
-        width: 75px;
-    }
-}
-
-.instruction {
-    color: white;
-    font-size: 1rem;
-    margin: 10px 0;
-    font-family: 'MiSansCH', Arial, sans-serif;
+    color: #ff6b6b;
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-width: 70px;
     text-align: center;
 }
 
-.desktop-instruction, .mobile-instruction {
-    display: none;  /* Hidden by default, controlled by JS */
-}
-
-.mode-toggle {
-    display: none;  /* Hidden by default, controlled by JS */
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-/* .mode-btn {
-    padding: 8px 16px;
-    font-size: 1rem;
-    background-color: #c0c0c0;
-    border: 2px solid;
-    border-color: #fff #808080 #808080 #fff;
-    font-family: 'MiSansCH', Arial, sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.mode-btn.active {
-    background-color: #a0a0a0;
-    border-color: #808080 #fff #fff #808080;
-} */
-
-/* Show mode toggle only on mobile */
-@media (max-width: 768px) {
-    .mode-toggle {
-        display: flex;
-    }
-}
-
-/* Info page 背景 */
-.info-page {
-    background: linear-gradient(135deg, rgba(38, 52, 90, 0.95) 0%, rgba(26, 37, 68, 0.95) 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    min-height: 100vh;
-}
-
-/* 資訊容器樣式 */
-.info-container {
-    position: relative;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    max-width: 100%;
-    width: 800px;
+/* Advertisement Sections */
+.game-page-main {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    background: url('image/poster_HPV.jpeg') center/cover no-repeat;  /* 直接設置為背景圖 */
+    height: 80vh;
+    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
 }
 
-/* 添加遮罩層 */
-.info-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(38, 52, 90, 0.9);  /* 深藍色遮罩 */
-    border-radius: 15px;
-}
-
-/* 確保內容在遮罩層上方 */
-.info-content {
-    position: relative;
-    z-index: 1;
+.gameplay-section {
+    flex: 0 0 70%;
     width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background: none;
 }
 
-/* 文字樣式 */
-.info-container h1,
-.info-container p,
-.info-container .input-group,
-.info-container button {
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    margin: 10px 0;
+.game-ad-section {
+    flex: 0 0 30%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: none;
+    background: none;
 }
 
 .ad-container {
@@ -530,70 +270,13 @@ body {
     transition: color 0.3s ease;
 }
 
-.watch-ad-btn {
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    background-color: #c0c0c0;
-    border: 3px solid;
-    border-color: #fff #808080 #808080 #fff;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 20%;
-    white-space: nowrap;
-    z-index: 1001;
-    margin-top: 20px;
+.ad-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
-.watch-ad-btn:hover {
-    background-color: #d0d0d0;
-}
-
-.close-ad-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 18px;
-    z-index: 1000;
-    transition: transform 0.3s ease;
-}
-
-.close-ad-btn:hover {
-    background: rgba(0, 0, 0, 0.9);
-    transform: scale(1.1);
-}
-
-.skip-ad-btn {
-    position: absolute;
-    bottom: 40px;
-    right: 10px;
-    padding: 8px 16px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    z-index: 1000;
-    transition: background-color 0.3s;
-}
-
-.skip-ad-btn:hover {
-    background: rgba(0, 0, 0, 0.9);
-}
-
-/* Banner advertisement styles */
 .banner-ad {
     width: 100%;
     overflow: hidden;
@@ -628,107 +311,22 @@ body {
     transform: translateZ(0);
 }
 
-/* 響應式調整 */
-@media (max-width: 768px) {
-    .banner-ad {
-        aspect-ratio: 1200/400;
-    }
+/* Unified button styles */
+.mode-btn, .reset-button, .restart-btn, .learn-more-btn, 
+.restart-game-btn, .start-btn, .watch-ad-btn {
+    background: linear-gradient(135deg, #ff7f50 0%, #ff6b3d 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* 手機版特別調整 */
-@media (max-width: 768px) {
-    .game-wrapper {
-        padding: 10px;
-        max-height: 100vh;
-        justify-content: flex-start;
-    }
-
-    .game-container {
-        max-height: min(calc(100vh - 200px), calc(100vw + 80px));
-    }
-
-    #gameBoard {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .cell {
-        font-size: clamp(8px, 2.5vw, 14px);
-    }
-}
-
-/* iPhone SE 和其他小螢幕設備的特別調整 */
-@media (max-height: 667px) {
-    .game-container {
-        max-height: calc(100vh - 180px);
-    }
-
-    .header {
-        margin-bottom: 5px;
-    }
-
-    .game-logo {
-        width: 150px;
-    }
-
-    .instruction {
-        margin-bottom: 5px;
-    }
-}
-
-/* 確保在極小螢幕上的顯示 */
-@media (max-width: 320px) {
-    .game-wrapper {
-        gap: 5px;
-        padding: 5px;
-    }
-
-    .cell {
-        font-size: clamp(6px, 2vw, 12px);
-    }
-}
-
-/* 保在較高螢幕上的顯示 */
-@media (min-height: 800px) {
-    .game-container {
-        max-height: min(calc(100vh - 300px), calc(100vw + 120px));
-    }
-}
-
-.lottery-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1002;
-    text-align: center;
-}
-
-.lottery-image {
-    max-width: 80%;
-    height: auto;
-    border-radius: 8px;
-}
-
-.lottery-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: red;
-    font-size: 50px;
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 10px 20px;
-    border-radius: 8px;
-    white-space: nowrap;
-    text-shadow: 
-        0 0 10px rgba(255, 255, 255, 0.5),
-        2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.close-lottery-btn {
+/* Ad-related buttons */
+.close-ad-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -742,347 +340,250 @@ body {
     justify-content: center;
     cursor: pointer;
     font-size: 18px;
-    z-index: 1003;
+    z-index: 1000;
     transition: transform 0.3s ease;
 }
 
-.close-lottery-btn:hover {
+.skip-ad-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 10px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+/* Hover effects */
+.cell:hover { 
+    background-color: #3a4d85;
+    transform: scale(0.95);
+}
+
+.cell.revealed { 
+    background-color: #1c2a4a;
+    border-color: rgba(255, 255, 255, 0.05);
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.cell[data-mines="1"] { color: #ff7f50; }
+.cell[data-mines="2"] { color: #81c784; }
+.cell[data-mines="3"] { color: #f62525; }
+.cell[data-mines="4"] { color: #9575cd; }
+.cell[data-mines="5"] { color: #f06292; }
+.cell[data-mines="6"] { color: #4dd0e1; }
+.cell[data-mines="7"] { color: #fff176; }
+.cell[data-mines="8"] { color: #a1887f; }
+
+.close-ad-btn:hover { 
     background: rgba(0, 0, 0, 0.9);
     transform: scale(1.1);
 }
+.skip-ad-btn:hover { background: rgba(0, 0, 0, 0.9); }
 
-/* 在小螢幕上的響應式調整 */
-@media (max-height: 700px) {
-    .info-container {
-        height: 90vh;
-        width: calc(90vh * 0.714);
-    }
+/* Animations */
+@keyframes explode {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.5; }
+    100% { transform: scale(0.8); opacity: 0.3; }
 }
 
-.info-container h1 {
-    font-size: 1.5rem;
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+@keyframes burn {
+    0% { background: linear-gradient(0deg, rgba(255, 87, 34, 0) 0%, rgba(255, 87, 34, 0) 100%); }
+    50% { background: linear-gradient(0deg, rgba(255, 87, 34, 0.8) 0%, rgba(255, 193, 7, 0.6) 50%, rgba(255, 87, 34, 0) 100%); }
+    100% { background: linear-gradient(0deg, rgba(255, 87, 34, 0) 0%, rgba(255, 87, 34, 0) 100%); }
 }
 
-/* 第一個 h1 的下方間距 */
-.info-container h1:first-of-type {
-    margin-top: 80px;
-    margin-bottom: -5px;
-}
-
-.info-container h1:last-of-type {
-    margin-bottom: 100px;
-}
-
-/* 響應式調整 */
+/* Media Queries */
 @media (max-width: 768px) {
-    .info-container h1 {
-        font-size: 1.3rem;
+    .game-wrapper {
+        width: min(95vw, 95vh, 450px);
+        padding: 10px;
+        max-height: 100vh;
+        justify-content: flex-start;
+    }
+
+    .game-container {
+        height: 100%;
+        padding: 15px 10px;
+        gap: 3px;
+    }
+
+    .game-title {
+        font-size: 1.5rem;
+        padding: 8px;
+    }
+
+    .cell {
+        font-size: clamp(8px, 2.5vw, 14px);
+    }
+
+    .mode-toggle {
+        display: flex;
+    }
+
+    .banner-ad {
+        aspect-ratio: 1200/400;
     }
 }
 
-/* 調整內文字體大小 */
-.info-section p {
-    color: #ffffff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    font-size: 1rem;  /* 縮小字體大小 */
-    margin: 5px 0;  /* 調整行間距 */
-    white-space: nowrap;  /* 防止換行 */
-}
-
-/* 響應式調整 */
-@media (max-width: 768px) {
-    .info-section p {
-        font-size: 0.9rem;  /* 在手機版上更小 */
+@media (max-height: 667px) {
+    .game-container {
+        max-height: calc(100vh - 180px);
     }
 }
 
-/* 在特小螢幕上的調整 */
 @media (max-width: 320px) {
-    .info-section p {
-        font-size: 0.8rem;  /* 在更小的螢幕上進步縮小 */
+    .game-wrapper {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .cell {
+        font-size: clamp(6px, 2vw, 12px);
     }
 }
 
-/* 為了確保在不同螢幕尺寸下的響應式表現 */
-@media (max-height: 600px) {
-    .watch-ad-btn {
-        bottom: 15%;  /* 在較小的螢幕上調整位置 */
-        font-size: 1rem;  /* 縮小字體 */
-        padding: 8px 16px;  /* 縮小按鈕 */
-    }
+/* Mode toggle buttons */
+.mode-toggle {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+    width: 100%;
 }
 
-/* 在特小螢幕上的調整 */
-@media (max-height: 400px) {
-    .watch-ad-btn {
-        bottom: 10%;
-        font-size: 0.9rem;
-        padding: 6px 12px;
-    }
+.mode-btn {
+    flex: 0 1 auto;
+    padding: 8px 16px;
+    background: rgba(38, 52, 90, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    transition: all 0.2s ease;
 }
 
-#loseMessage h2 {
-    font-size: 1rem;
-    font-weight: normal;
-    margin: 20px 0;
-    color: #ffffff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    padding: 0 15px;
-    line-height: 1.4;
-    max-width: 90%;
-    display: none; /* 預設隱藏所有訊息 */
-}
-
-/* 響應式調整 */
-@media (max-width: 768px) {
-    #loseMessage h2 {
-        font-size: 0.9rem;
-        margin: 10px 0;
-    }
-}
-
-/* 在特小螢幕上的調整 */
-@media (max-width: 320px) {
-    #loseMessage h2 {
-        font-size: 0.8rem;
-        margin: 6px 0;
-    }
-}
-
-/* 添加疫苗圖片的樣式 */
-.vaccine-image {
-    position: absolute;
-    top: 43%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 130px;
-    height: auto;
-    z-index: 10000;
-    pointer-events: none;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-    display: none;
-}
-
-/* 只在遊戲結束訊息顯示時才顯示疫苗圖片 */
-#winMessage:not([style*="display: none"]) ~ .vaccine-image,
-#loseMessage:not([style*="display: none"]) ~ .vaccine-image {
-    display: block;
-    animation: vaccineAppear 0.5s ease-out forwards;
-}
-
-@keyframes vaccineAppear {
-    from {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-}
-
-/* 调整消息框层级 */
-#winMessage, #loseMessage {
-    z-index: 9999;
-}
-
-/* 调整输入框区域的样式 */
-.info-section .input-group {
+/* Info page layout */
+.info-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;  /* 增加与按钮的间距 */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    gap: 0;
+    margin-top: 2rem;
+}
+
+.info-section h1 {
+    font-size: 1.8rem;
+    margin: 0.2em 0;
+    line-height: 1;
+}
+
+.info-section h1:last-of-type {
+    margin-bottom: 2rem !important;
+}
+
+.info-section h3 {
+    font-size: 1.1rem;
+    margin: 0.3em 0;
+    line-height: 0.8;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+.input-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.input-wrapper {
     width: 100%;
     max-width: 300px;
-    position: relative;
-    z-index: 2;  /* 确保输入在上层 */
-}
-
-.info-section input[type="text"] {
-    padding: 8px 12px;
-    border: 2px solid #ffffff;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    width: 100%;
-}
-
-/* 手机版特别调整 */
-@media (max-width: 768px) {
-    .info-container {
-        justify-content: flex-start;  /* 从顶部开始排列 */
-        padding-top: 40px;  /* 增加顶部间距 */
-    }
-    
-    .info-section {
-        margin-bottom: 30px;  /* 增加底部间距 */
-    }
-    
-    .start-btn {
-        position: fixed;  /* 固定在底部 */
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: auto;
-        min-width: 200px;
-        z-index: 1;
-    }
-}
-
-/* 在特小螢幕上的調整 */
-@media (max-height: 600px) {
-    .info-container {
-        padding-top: 20px;
-    }
-    
-    .info-section {
-        margin-bottom: 20px;
-    }
-    
-    .start-btn {
-        bottom: 10px;
-    }
-}
-
-.button-group {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.learn-more-btn, .restart-game-btn {
-    padding: 10px 20px;
+#playerName {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
     font-size: 1rem;
-    background-color: #c0c0c0;
-    border: 3px solid;
-    border-color: #fff #808080 #808080 #fff;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
-.learn-more-btn:hover, .restart-game-btn:hover {
-    background-color: #d0d0d0;
+#playerName::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
-/* 手机版按钮调整 */
+#playerName:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin: 0;
+    min-height: 1.2rem;
+}
+
+.start-btn-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+    padding: 1rem;
+}
+
+.start-btn {
+    background: #ff6b3d;
+    padding: 0.8rem 3rem;
+    font-size: 1.2rem;
+    min-width: 180px;
+    border-radius: 8px;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.start-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Add mobile-specific adjustments */
 @media (max-width: 768px) {
-    .button-group {
-        flex-direction: column;
-        width: 80%;
-        max-width: 300px;
-    }
-
-    .learn-more-btn, .restart-game-btn {
-        width: 100%;
-        font-size: 0.9rem;
-        padding: 8px 16px;
-    }
-}
-
-@media (max-width: 768px) {
-    .info-container {
-        padding: 30px 15px 15px;
-    }
-    
-    .info-container h1 {
-        font-size: clamp(1.2rem, 4vw, 1.5rem);
-        line-height: 1.3;
-    }
-    
     .info-section {
-        padding: 0 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .info-container {
-        padding: 20px 10px 10px;
+        gap: 1rem;
     }
     
-    .info-section p {
-        font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+    .info-section h1 {
+        font-size: 1.5rem;
     }
     
-    .start-btn {
-        padding: 8px 16px;
+    .info-section h1:last-of-type {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .info-section h3 {
         font-size: 1rem;
     }
 }
-
-@media (max-height: 600px) {
-    .info-container {
-        gap: 10px;
-    }
-    
-    .info-section {
-        gap: 5px;
-    }
-}
-
-.cell.flagged {
-    background-color: #344677;
-}
-
-@media (max-width: 768px) {
-    .info-container {
-        width: 90%;
-        padding: 20px;
-    }
-
-    .info-section {
-        padding: 0 10px;
-    }
-
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* 确保输入框居中 */
-        width: 100%;
-    }
-
-    .input-group input {
-        width: 80%; /* 调整输入框宽度 */
-        max-width: 300px;
-    }
-
-    .start-btn {
-        width: 80%; /* 调整按钮宽度 */
-        max-width: 300px;
-        margin: 20px auto 0; /* 确保按钮居中 */
-    }
-}
-
-/* 特别针对游戏结束消息中的按钮 */
-#winMessage .restart-btn,
-#loseMessage .restart-btn,
-#loseMessage .learn-more-btn,
-#loseMessage .restart-game-btn {
-    background-color: #2d3d68;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-}
-
-#winMessage .restart-btn:hover,
-#loseMessage .restart-btn:hover,
-#loseMessage .learn-more-btn:hover,
-#loseMessage .restart-game-btn:hover {
-    background-color: #344677;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-  
