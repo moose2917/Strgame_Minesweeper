@@ -1,7 +1,7 @@
 console.log('Script loaded');
 
 const gridSize = 10;
-const mineCount = 10;
+const mineCount = 1;
 let board = [];
 let minePositions = [];
 let timer;
@@ -92,16 +92,6 @@ function initializeGame() {
     gameBoard.classList.remove('burning');
     gameBoard.innerHTML = '';
     
-    // Add mode toggle handlers
-    const modeButtons = document.querySelectorAll('.mode-btn');
-    modeButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            modeButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentMode = btn.dataset.mode;
-        });
-    });
-    
     // Create cells
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
@@ -147,6 +137,8 @@ function initializeGame() {
     cells.forEach(cell => {
         cell.style.pointerEvents = 'auto';
     });
+    
+    setupEventListeners();
 }
 
 function placeMines() {
@@ -273,6 +265,12 @@ function checkWin() {
         }
     }
     
+    // Remove any existing win message first
+    const existingWinMessage = document.getElementById('winMessage');
+    if (existingWinMessage) {
+        existingWinMessage.remove();
+    }
+    
     // Display win message
     const winMessage = document.createElement('div');
     winMessage.id = 'winMessage';
@@ -281,15 +279,31 @@ function checkWin() {
     winMessage.style.left = '50%';
     winMessage.style.transform = 'translate(-50%, -50%)';
     winMessage.style.background = 'rgba(0, 0, 0, 0.9)';
-    winMessage.style.padding = '20px';
+    winMessage.style.padding = '40px';
     winMessage.style.borderRadius = '10px';
     winMessage.style.color = 'white';
     winMessage.style.textAlign = 'center';
     winMessage.style.zIndex = '1000';
+    winMessage.style.minWidth = '300px';
+    winMessage.style.width = '80%';
+    winMessage.style.maxWidth = '400px';
+    
     winMessage.innerHTML = `
         <h2>恭喜你又讓賀瓏度過平安的一集!</h2>
-        <button onclick="initializeGame()" class="restart-btn">再玩一次</button>
+        <button class="restart-btn">再玩一次</button>
     `;
+    
+    // Create a new button and replace the existing one to avoid event listener stacking
+    const restartBtn = winMessage.querySelector('.restart-btn');
+    const newRestartBtn = restartBtn.cloneNode(true);
+    restartBtn.parentNode.replaceChild(newRestartBtn, restartBtn);
+    
+    // Add event listener to the new button
+    newRestartBtn.addEventListener('click', () => {
+        document.getElementById('winMessage').remove();
+        initializeGame();
+    });
+    
     document.body.appendChild(winMessage);
     return true;
 }
@@ -358,31 +372,29 @@ function setupEventListeners() {
     // Mode toggle buttons
     const modeButtons = document.querySelectorAll('.mode-btn');
     modeButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+        // Remove any existing event listeners
+        button.replaceWith(button.cloneNode(true));
+    });
+
+    // Re-add event listeners to the fresh buttons
+    document.querySelectorAll('.mode-btn').forEach(button => {
+        button.addEventListener('click', () => {
             // Remove active class from all buttons
-            modeButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             // Add active class to clicked button
             button.classList.add('active');
             // Update current mode
             currentMode = button.dataset.mode;
-        });
-
-        // Add touch event listeners for mobile
-        button.addEventListener('touchstart', function(e) {
-            e.preventDefault(); // Prevent default touch behavior
-            // Remove active class from all buttons
-            modeButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to touched button
-            button.classList.add('active');
-            // Update current mode
-            currentMode = button.dataset.mode;
+            console.log('Mode changed to:', currentMode); // Debug log
         });
     });
 
     // Add reset button handler
     const resetButton = document.querySelector('.reset-button');
     if (resetButton) {
-        resetButton.addEventListener('click', initializeGame);
+        resetButton.addEventListener('click', resetGame);
     }
 }
 

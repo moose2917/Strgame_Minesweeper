@@ -475,6 +475,21 @@ footer p {
     transition: all 0.2s ease;
 }
 
+/* Add styles for active mode button */
+.mode-btn.active {
+    background: linear-gradient(135deg, #ff7f50 0%, #ff6b3d 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Add hover effect for non-active buttons */
+.mode-btn:not(.active):hover {
+    background: rgba(38, 52, 90, 0.95);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
 /* Info page layout */
 .info-section {
     display: flex;
