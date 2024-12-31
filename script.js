@@ -23,11 +23,11 @@ const EMOJI_STATES = {
 const mineImages = ['😞', '🍑', '🐲', '🎤', '🙇‍♂️'];
 
 const MINE_MESSAGES = {
-    '😞': "對不起，喜劇演員不該嘻嘻哈哈",
-    '🍑': "對不起，我應該好好講話",
-    '🐲': "對不起，我不知道為什麼要對不起",
-    '🎤': "對不起，喜劇演員應該要承擔更多社會責任",
-    '🙇‍♂️': "對不起，目前還沒有做錯什麼，但我先道歉以備不時之需"
+    '😞': "對不起<br><span style='font-size: 0.8em'>喜劇演員不該嘻嘻哈哈</span>",
+    '🍑': "對不起<br><span style='font-size: 0.8em'>我應該好好講話</span>",
+    '🐲': "對不起<br><span style='font-size: 0.8em'>我不知道為什麼要對不起</span>",
+    '🎤': "對不起<br><span style='font-size: 0.8em'>喜劇演員應該要承擔更多社會責任</span>",
+    '🙇‍♂️': "對不起<br><span style='font-size: 0.8em'>目前還沒有做錯什麼，但我先道歉以備不時之需</span>"
 };
 
 function isTouchDevice() {
@@ -141,6 +141,12 @@ function initializeGame() {
     if (vaccineImage) {
         vaccineImage.style.display = 'none';
     }
+    
+    // Re-enable cell interactions
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        cell.style.pointerEvents = 'auto';
+    });
 }
 
 function placeMines() {
@@ -692,6 +698,12 @@ function gameOver(row, col) {
     clearInterval(timer);
     document.querySelector('.reset-button').textContent = EMOJI_STATES.CRY;
     
+    // Disable all cell interactions
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        cell.style.pointerEvents = 'none';
+    });
+    
     // Get the clicked mine's emoji and message
     const clickedMineEmoji = board[row][col].mineImage;
     const message = MINE_MESSAGES[clickedMineEmoji] || "遊戲結束!";
@@ -714,11 +726,14 @@ function gameOver(row, col) {
     loseMessage.style.left = '50%';
     loseMessage.style.transform = 'translate(-50%, -50%)';
     loseMessage.style.background = 'rgba(0, 0, 0, 0.9)';
-    loseMessage.style.padding = '20px';
+    loseMessage.style.padding = '40px';
     loseMessage.style.borderRadius = '10px';
     loseMessage.style.color = 'white';
     loseMessage.style.textAlign = 'center';
     loseMessage.style.zIndex = '1000';
+    loseMessage.style.minWidth = '300px';
+    loseMessage.style.width = '80%';
+    loseMessage.style.maxWidth = '400px';
     
     loseMessage.innerHTML = `
         <div style="font-size: 48px; margin-bottom: 10px;">${clickedMineEmoji}</div>
