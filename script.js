@@ -1,7 +1,7 @@
 console.log('Script loaded');
 
 const gridSize = 10;
-const mineCount = 15;
+const mineCount = 5;
 let board = [];
 let minePositions = [];
 let timer;
@@ -265,6 +265,9 @@ function checkWin() {
         }
     }
     
+    // 停止計時器
+    clearInterval(timer);
+    
     // Remove any existing win message first
     const existingWinMessage = document.getElementById('winMessage');
     if (existingWinMessage) {
@@ -289,7 +292,7 @@ function checkWin() {
     winMessage.style.maxWidth = '400px';
     
     winMessage.innerHTML = `
-        <h2>恭喜你又讓賀瓏度過平安的一集!</h2>
+        <h2>恭喜!<br>賀瓏又度過了平安的一集</h2>
         <button class="restart-btn">再玩一次</button>
     `;
     
@@ -358,7 +361,7 @@ function validateAndStartGame() {
             </div>
         </section>
         <section class="game-ad-section">
-            <img src="image/TNNS_Banner.png" alt="TNNS Banner" class="ad-banner">
+            <img src="image/TNNSS2_Banner.png" alt="TNNS Banner" class="ad-banner">
         </section>
     `;
     
@@ -501,113 +504,100 @@ function showAd() {
 }
 
 function startAd() {
-    console.log('開始播放廣告'); // 添加調試日誌
+    console.log('開始播放廣告');
     
-    // 移除燃燒果
-    const gameBoard = document.getElementById('gameBoard');
-    gameBoard.classList.remove('burning');
-    
-    // 隱藏觀看廣告按鈕和失敗訊息標題
-    const watchAdButton = document.getElementById('watchAdButton');
-    const loseMessageTitle = document.querySelector('#loseMessage h2');
-    
-    if (watchAdButton) watchAdButton.style.display = 'none';
-    if (loseMessageTitle) loseMessageTitle.style.display = 'none';
+    // 隱藏失敗訊息
+    const loseMessage = document.getElementById('loseMessage');
+    if (loseMessage) loseMessage.style.display = 'none';
     
     // 顯示廣告容器
     const adContainer = document.getElementById('adContainer');
-    if (adContainer) adContainer.style.display = 'block';
-    
     const video = document.getElementById('adVideo');
-    const timerDisplay = document.getElementById('adTimer');
     const skipButton = document.getElementById('skipAdButton');
-    const closeButton = document.getElementById('closeAdButton');
     
-    if (!video) {
-        console.error('找不到視頻元素');
-        return;
-    }
-    
-    // 隱藏略過按鈕和關閉按鈕
-    if (skipButton) skipButton.style.display = 'none';
-    if (closeButton) closeButton.style.display = 'none';
+    adContainer.style.display = 'block';
     
     // 重置視頻
     video.currentTime = 0;
     video.load();
     
     // 設置視頻屬性
-    video.playsInline = true;
-    video.muted = false;
-    video.controls = false;
+    video.playsInline = true;  // 防止全螢幕播放
+    video.play();
     
-    // 嘗試播放視頻
-    const playPromise = video.play();
+    // 5秒後顯示跳過按鈕
+    setTimeout(() => {
+        skipButton.style.display = 'block';
+    }, 5000);
     
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            console.log('視頻開始播放');
-        }).catch(error => {
-            console.error('視頻播放失敗:', error);
-            // 如果播放失敗，可以顯示錯誤訊息或直接重新開始遊戲
-            initializeGame();
-        });
-    }
-    
-    // 更新計時器和檢查是否顯示略過按鈕
-    const updateTimer = () => {
-        if (!video.duration) return;
-        const timeLeft = Math.ceil(video.duration - video.currentTime);
-        if (timerDisplay) timerDisplay.textContent = timeLeft;
-        
-        // 在播放 5 秒後顯示略過按鈕
-        if (video.currentTime >= 5 && skipButton) {
-            skipButton.style.display = 'block';
-        }
+    // 添加跳過按鈕事件
+    skipButton.onclick = () => {
+        video.pause();
+        adContainer.style.display = 'none';
+        skipButton.style.display = 'none';
+        initializeGame();
     };
     
-    // 監聽視頻播放時間更新
-    video.addEventListener('timeupdate', updateTimer);
-    
-    // 設置略過廣告按鈕點擊事件
-    if (skipButton) {
-        skipButton.onclick = () => {
-            video.pause();
-            document.getElementById('loseMessage').style.display = 'none';
-            adContainer.style.display = 'none';
-            skipButton.style.display = 'none';
-            closeButton.style.display = 'none';
-            if (loseMessageTitle) loseMessageTitle.style.display = 'block';
-            initializeGame();
-        };
-    }
-    
     // 視頻結束時的處理
-    video.addEventListener('ended', () => {
-        video.pause();
-        if (skipButton) skipButton.style.display = 'none';
-        if (closeButton) closeButton.style.display = 'flex';
-        
-        if (closeButton) {
-            closeButton.onclick = () => {
-                if (isFirstClose) {
-                    isFirstClose = false;
-                    window.open(REDIRECT_URL, '_blank');
-                    
-                    document.getElementById('loseMessage').style.display = 'none';
-                    adContainer.style.display = 'none';
-                    closeButton.style.display = 'none';
-                    if (loseMessageTitle) loseMessageTitle.style.display = 'block';
-                    isFirstClose = true;
-                    initializeGame();
-                }
-            };
-        }
-    });
+    video.onended = () => {
+        adContainer.style.display = 'none';
+        initializeGame();
+    };
 }
 
-// Banner 輪播功能
+const bannerData = [
+    {
+        image: 'image/TNNSS2_Banner.png',
+        link: 'https://go.fansi.me/Tickets/events/210001'
+    },
+    {
+        image: 'image/TheDriller_Banner.png',
+        link: 'https://content.strnetwork.cc/courses/thedriller'
+    },
+    {
+        image: 'image/G8_Banner.png',
+        link: 'https://content.strnetwork.cc/courses/g8-2023'
+    },
+    {
+        image: 'image/dotcome_Banner.png',
+        link: 'https://content.strnetwork.cc/courses/dacon2023'
+    },
+    {
+        image: 'image/BURNTGOP_Banner.png',
+        link: 'https://content.strnetwork.cc/courses/burn-tgop'
+    },
+    {
+        image: 'image/BBK_Banner.png',
+        link: 'https://content.strnetwork.cc/courses/bbklucas2024'
+    },
+    {
+        image: 'image/SIABTC_Banner.png',
+        link: 'https://content.strnetwork.cc/courses/storminabubbleteacup'
+    },
+    {
+        image: 'image/Merchandise_Banner.png',
+        link: null  // 設為 null 表示無連結
+    }
+];
+
 function initBannerRotation() {
+    const bannerContainer = document.querySelector('.banner-container');
+    bannerContainer.innerHTML = bannerData.map(banner => {
+        if (banner.link) {
+            return `
+                <a href="${banner.link}" class="banner-link" target="_blank">
+                    <img src="${banner.image}" alt="Banner" class="banner-image">
+                </a>
+            `;
+        } else {
+            return `
+                <div class="banner-link">
+                    <img src="${banner.image}" alt="Banner" class="banner-image">
+                </div>
+            `;
+        }
+    }).join('');
+
     const bannerLinks = document.querySelectorAll('.banner-link');
     let currentIndex = 0;
     let lastRotationTime = Date.now();
@@ -636,24 +626,10 @@ function initBannerRotation() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded');
     
-    // 確保遊戲界面一開始是隱藏的
-    const gameWrapper = document.getElementById('gameWrapper');
-    if (gameWrapper) {
-        gameWrapper.style.display = 'none';
-    }
-    
-    // 確保信息頁面一開始是顯示的
-    const infoPage = document.getElementById('infoPage');
-    if (infoPage) {
-        infoPage.style.display = 'flex';
-    }
-    
-    // 添加開始遊戲按鈕的事件監聽器
     const startGameBtn = document.getElementById('startGameBtn');
     if (startGameBtn) {
         startGameBtn.addEventListener('click', function() {
             console.log('Start button clicked');
-            // Replace main content with game interface
             const main = document.querySelector('main');
             main.style.height = '80vh';
             main.className = 'game-page-main';
@@ -662,7 +638,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="game-wrapper">
                         <div class="game-container">
                             <div class="status-bar">
-                                <div class="mine-counter">010</div>
+                                <div class="mine-counter">005</div>
                                 <button class="reset-button">🙂</button>
                                 <div class="timer">00:00</div>
                             </div>
@@ -674,22 +650,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                 </section>
+                <div class="banner-container">
+                    <a href="https://go.fansi.me/Tickets/events/210001" class="banner-link" target="_blank">
+                        <img src="image/TNNSS2_Banner.png" alt="TNNS Banner" class="banner-image">
+                    </a>
+                    <a href="#" class="banner-link">
+                        <img src="image/SIABTC_Banner.png" alt="SIABTC Banner" class="banner-image">
+                    </a>
+                </div>
             `;
             
-            // Initialize the game
             setTimeout(() => {
                 initializeGame();
                 setupEventListeners();
+                initBannerRotation();
             }, 0);
         });
-    }
-    
-    // 更新設備特定元素
-    updateDeviceSpecificElements();
-    
-    // Initialize banner rotation if it exists
-    if (document.querySelector('.banner-link')) {
-        initBannerRotation();
     }
 });
 
@@ -716,10 +692,6 @@ function gameOver(row, col) {
         cell.style.pointerEvents = 'none';
     });
     
-    // Get the clicked mine's emoji and message
-    const clickedMineEmoji = board[row][col].mineImage;
-    const message = MINE_MESSAGES[clickedMineEmoji] || "遊戲結束!";
-    
     // Show all mines
     minePositions.forEach(([r, c]) => {
         const cellElement = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
@@ -730,27 +702,40 @@ function gameOver(row, col) {
         }
     });
     
-    // Display lose message
-    const loseMessage = document.createElement('div');
-    loseMessage.id = 'loseMessage';
-    loseMessage.style.position = 'fixed';
-    loseMessage.style.top = '50%';
-    loseMessage.style.left = '50%';
-    loseMessage.style.transform = 'translate(-50%, -50%)';
-    loseMessage.style.background = 'rgba(0, 0, 0, 0.7)';
-    loseMessage.style.padding = '40px';
-    loseMessage.style.borderRadius = '10px';
-    loseMessage.style.color = 'white';
-    loseMessage.style.textAlign = 'center';
-    loseMessage.style.zIndex = '1000';
-    loseMessage.style.minWidth = '300px';
-    loseMessage.style.width = '80%';
-    loseMessage.style.maxWidth = '400px';
+    // 添加燃燒效果
+    const gameBoard = document.getElementById('gameBoard');
+    const burningEffect = document.createElement('div');
+    burningEffect.className = 'burning-effect';
+    gameBoard.appendChild(burningEffect);
     
-    loseMessage.innerHTML = `
-        <div style="font-size: 48px; margin-bottom: 10px;">${clickedMineEmoji}</div>
-        <h2>${message}</h2>
-        <button onclick="initializeGame()" class="restart-btn">重新開始</button>
-    `;
-    document.body.appendChild(loseMessage);
+    // 延遲 2 秒後顯示失敗訊息
+    setTimeout(() => {
+        // Create and show lose message
+        const loseMessage = document.createElement('div');
+        loseMessage.id = 'loseMessage';
+        loseMessage.style.position = 'fixed';
+        loseMessage.style.top = '50%';
+        loseMessage.style.left = '50%';
+        loseMessage.style.transform = 'translate(-50%, -50%)';
+        loseMessage.style.background = 'rgba(0, 0, 0, 0.7)';
+        loseMessage.style.padding = '40px';
+        loseMessage.style.borderRadius = '10px';
+        loseMessage.style.color = 'white';
+        loseMessage.style.textAlign = 'center';
+        loseMessage.style.zIndex = '1000';
+        loseMessage.style.minWidth = '300px';
+        loseMessage.style.width = '80%';
+        loseMessage.style.maxWidth = '400px';
+        
+        loseMessage.innerHTML = `
+            <div style="font-size: 48px; margin-bottom: 10px;">${board[row][col].mineImage}</div>
+            <h2>${MINE_MESSAGES[board[row][col].mineImage]}</h2>
+            <button id="restartGameBtn" class="restart-btn">再次挑戰</button>
+        `;
+        
+        document.body.appendChild(loseMessage);
+        
+        // Add click event for restart button
+        document.getElementById('restartGameBtn').addEventListener('click', startAd);
+    }, 2000); // 2秒延遲
 }
