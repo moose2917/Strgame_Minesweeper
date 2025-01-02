@@ -265,6 +265,9 @@ function checkWin() {
         }
     }
     
+    // Stop the timer when winning
+    clearInterval(timer);
+    
     // Remove any existing win message first
     const existingWinMessage = document.getElementById('winMessage');
     if (existingWinMessage) {

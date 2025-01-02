@@ -75,9 +75,21 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(135deg, #26345A 0%, #1a2544 100%);
+    background: 
+        linear-gradient(135deg, rgba(38, 52, 90, 0.7) 0%, rgba(26, 37, 68, 0.7) 100%),
+        url('image/Main_photo.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
     min-height: 80vh;
     padding: 2rem 1rem;
+}
+
+/* 針對桌面版的背景位置調整 */
+@media (min-width: 768px) {
+    main {
+        background-position: center center;
+    }
 }
 
 footer {
