@@ -265,7 +265,7 @@ function checkWin() {
         }
     }
     
-    // 停止計時器
+    // Stop the timer when winning
     clearInterval(timer);
     
     // Remove any existing win message first
