@@ -1,7 +1,7 @@
 console.log('Script loaded');
 
 const gridSize = 10;
-const mineCount = 5;
+const mineCount = 15;
 let board = [];
 let minePositions = [];
 let timer;
