@@ -550,10 +550,10 @@ const bannerData = [
         image: 'image/TNNSS2_Banner.png',
         link: 'https://go.fansi.me/Tickets/events/210001'
     },
-    {
+    /*{
         image: 'image/TheDriller_Banner.png',
         link: 'https://content.strnetwork.cc/courses/thedriller'
-    },
+    },*/
     {
         image: 'image/G8_Banner.png',
         link: 'https://content.strnetwork.cc/courses/g8-2023'
@@ -562,10 +562,10 @@ const bannerData = [
         image: 'image/dotcome_Banner.png',
         link: 'https://content.strnetwork.cc/courses/dacon2023'
     },
-    {
+    /*{
         image: 'image/BURNTGOP_Banner.png',
         link: 'https://content.strnetwork.cc/courses/burn-tgop'
-    },
+    },*/
     {
         image: 'image/BBK_Banner.png',
         link: 'https://content.strnetwork.cc/courses/bbklucas2024'
