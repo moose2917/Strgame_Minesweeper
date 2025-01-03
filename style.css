@@ -77,10 +77,12 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 60vh;  /* 降低最小高度 */
-    padding: 10px;  /* 減少內邊距 */
+    min-height: 50vh;  /* 從 60vh 降低到 50vh */
+    padding: 5px;      /* 從 10px 減少到 5px */
     text-align: center;
     color: white;
+    transform: scale(0.9);  /* 整體縮小到 90% */
+    transform-origin: top center;
 }
 
 /* 針對桌面版的背景位置調整 */
@@ -557,6 +559,12 @@ footer p {
     opacity: 0.9;
 }
 
+.info-section h3:last-of-type {
+    color: #8B0000;  /* 暗紅色 */
+    margin-top: 2em;  /* 設定為兩倍行距 */
+    font-weight: 500;  /* 稍微加粗 */
+}
+
 .input-section {
     display: flex;
     justify-content: center;
@@ -827,27 +835,6 @@ footer p {
         opacity: 0.6;
         filter: brightness(1);
     }
-}
-
-/* Temporary debugging colors for layout visualization */
-.game-page-main {
-    background-color: rgba(255, 0, 0, 0.3);  /* Brighter red */
-}
-
-.gameplay-section {
-    background-color: rgba(0, 255, 0, 0.3);  /* Brighter green */
-}
-
-.game-wrapper {
-    background-color: rgba(0, 0, 255, 0.3);  /* Brighter blue */
-}
-
-.game-ad-section {
-    background-color: rgba(255, 255, 0, 0.3);  /* Brighter yellow */
-}
-
-.banner-container {
-    background-color: rgba(255, 0, 255, 0.3);  /* Brighter purple */
 }
 
 /* 針對 iPhone 12 mini 尺寸的手機 */
