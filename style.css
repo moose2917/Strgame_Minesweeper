@@ -559,12 +559,6 @@ footer p {
     opacity: 0.9;
 }
 
-.info-section h3:last-of-type {
-    color: #8B0000;  /* 暗紅色 */
-    margin-top: 2em;  /* 設定為兩倍行距 */
-    font-weight: 500;  /* 稍微加粗 */
-}
-
 .input-section {
     display: flex;
     justify-content: center;
@@ -870,4 +864,99 @@ footer p {
         position: relative;
         z-index: 1;
     }
+}
+
+/* Ranking Modal Styles */
+.ranking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.ranking-content {
+    background: #1a2544;
+    padding: 20px;
+    border-radius: 12px;
+    min-width: 300px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.ranking-content h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#rankingTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    color: white;
+}
+
+#rankingTable th,
+#rankingTable td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#rankingTable th {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.close-ranking-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 8px 16px;
+    background: #ff6b3d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.close-ranking-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Add these styles for the view-rankings-btn */
+.view-rankings-btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);  /* Green gradient */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 5px;  /* Add some spacing between buttons */
+}
+
+.view-rankings-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.view-rankings-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Adjust the restart-btn to ensure consistent spacing */
+.restart-btn {
+    margin: 5px;  /* Match the spacing of view-rankings-btn */
 }

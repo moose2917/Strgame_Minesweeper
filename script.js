@@ -1,7 +1,7 @@
 console.log('Script loaded');
 
 const gridSize = 10;
-const mineCount = 15;
+const mineCount = 5;
 let board = [];
 let minePositions = [];
 let timer;
@@ -29,6 +29,9 @@ const MINE_MESSAGES = {
     '🎤': "對不起<br><span style='font-size: 0.8em'>喜劇演員應該要承擔更多社會責任</span>",
     '🙇‍♂️': "對不起<br><span style='font-size: 0.8em'>目前還沒有做錯什麼，但我先道歉以備不時之需</span>"
 };
+
+let rankings = [];
+const MAX_RANKINGS = 10; // Maximum number of rankings to display
 
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
@@ -274,6 +277,9 @@ function checkWin() {
         existingWinMessage.remove();
     }
     
+    // Save the ranking
+    saveRanking(playerName, seconds);
+    
     // Display win message
     const winMessage = document.createElement('div');
     winMessage.id = 'winMessage';
@@ -293,21 +299,20 @@ function checkWin() {
     
     winMessage.innerHTML = `
         <h2>恭喜!<br>賀瓏又度過了平安的一集</h2>
+        <p>完成時間: ${formatTime(seconds)}</p>
         <button class="restart-btn">再玩一次</button>
+        <button class="view-rankings-btn">查看排行榜</button>
+        <p style="color: #ff0000; margin-top: 5px;">成功更新排行榜</p>
     `;
     
-    // Create a new button and replace the existing one to avoid event listener stacking
-    const restartBtn = winMessage.querySelector('.restart-btn');
-    const newRestartBtn = restartBtn.cloneNode(true);
-    restartBtn.parentNode.replaceChild(newRestartBtn, restartBtn);
-    
-    // Add event listener to the new button
-    newRestartBtn.addEventListener('click', () => {
+    // Add event listeners
+    document.body.appendChild(winMessage);
+    document.querySelector('.view-rankings-btn').addEventListener('click', showRankings);
+    document.querySelector('.restart-btn').addEventListener('click', () => {
         document.getElementById('winMessage').remove();
         initializeGame();
     });
     
-    document.body.appendChild(winMessage);
     return true;
 }
 
@@ -628,44 +633,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const startGameBtn = document.getElementById('startGameBtn');
     if (startGameBtn) {
-        startGameBtn.addEventListener('click', function() {
-            console.log('Start button clicked');
-            const main = document.querySelector('main');
-            main.style.height = '80vh';
-            main.className = 'game-page-main';
-            main.innerHTML = `
-                <section class="gameplay-section">
-                    <div class="game-wrapper">
-                        <div class="game-container">
-                            <div class="status-bar">
-                                <div class="mine-counter">005</div>
-                                <button class="reset-button">🙂</button>
-                                <div class="timer">00:00</div>
-                            </div>
-                            <div id="gameBoard"></div>
-                            <div class="mode-toggle">
-                                <button class="mode-btn active" data-mode="dig">⛏️挖掘</button>
-                                <button class="mode-btn" data-mode="flag">🚩標記</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <div class="banner-container">
-                    <a href="https://go.fansi.me/Tickets/events/210001" class="banner-link" target="_blank">
-                        <img src="image/TNNSS2_Banner.png" alt="TNNS Banner" class="banner-image">
-                    </a>
-                    <a href="#" class="banner-link">
-                        <img src="image/SIABTC_Banner.png" alt="SIABTC Banner" class="banner-image">
-                    </a>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                initializeGame();
-                setupEventListeners();
-                initBannerRotation();
-            }, 0);
-        });
+        startGameBtn.addEventListener('click', validateAndStartGame);
     }
 });
 
@@ -739,3 +707,73 @@ function gameOver(row, col) {
         document.getElementById('restartGameBtn').addEventListener('click', startAd);
     }, 2000); // 2秒延遲
 }
+
+function saveRanking(name, time) {
+    // Don't save if time is 0
+    if (time === 0) {
+        return;
+    }
+
+    // Load existing rankings from localStorage
+    const savedRankings = localStorage.getItem('minesweeperRankings');
+    rankings = savedRankings ? JSON.parse(savedRankings) : [];
+    
+    // Add new ranking
+    rankings.push({
+        name: name,
+        time: time
+    });
+    
+    // Sort by time (ascending)
+    rankings.sort((a, b) => a.time - b.time);
+    
+    // Keep only top rankings
+    rankings = rankings.slice(0, MAX_RANKINGS);
+    
+    // Save back to localStorage
+    localStorage.setItem('minesweeperRankings', JSON.stringify(rankings));
+}
+
+// Add this function to clear all rankings (you can call this once to reset everything)
+function clearRankings() {
+    localStorage.removeItem('minesweeperRankings');
+    rankings = [];
+}
+
+// Call this once to clear existing rankings with 00:00 times
+clearRankings();
+
+function showRankings() {
+    const rankingModal = document.getElementById('rankingModal');
+    const tableBody = document.querySelector('#rankingTable tbody');
+    tableBody.innerHTML = '';
+    
+    rankings.forEach((rank, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${rank.name}</td>
+            <td>${formatTime(rank.time)}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    rankingModal.style.display = 'flex';
+}
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing DOMContentLoaded code ...
+    
+    const closeRankingBtn = document.querySelector('.close-ranking-btn');
+    if (closeRankingBtn) {
+        closeRankingBtn.addEventListener('click', () => {
+            document.getElementById('rankingModal').style.display = 'none';
+        });
+    }
+});

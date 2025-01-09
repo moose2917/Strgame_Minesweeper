@@ -20,9 +20,15 @@
       <h3>賀粉們！第二季一樣很危險</h3>
       <h3>大家一起協力找出地雷</h3>
       <h3>保護賀瓏不要被炎上</h3>
-      <h3>本集賀瓏運勢：大吉</h3>
     </section>
 
+    <section class="input-section">
+        <div class="input-wrapper">
+            <input type="text" id="playerName" placeholder="請輸入你的名字" maxlength="10">
+            <p id="nameError" class="error-message"></p>
+        </div>
+    </section>
+    
     <section class="start-btn-section">
       <button id="startGameBtn" class="start-btn">開始遊戲</button>
     </section>
@@ -31,6 +37,24 @@
   <footer>
     <p>Copyright @ 2025 STR NETWORK All Rights Reserved.</p>
   </footer>
+
+  <div id="rankingModal" class="ranking-modal" style="display: none;">
+    <div class="ranking-content">
+        <h2>排行榜</h2>
+        <table id="rankingTable">
+            <thead>
+                <tr>
+                    <th>排名</th>
+                    <th>玩家</th>
+                    <th>時間</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button class="close-ranking-btn">關閉</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
   <div id="adContainer" style="display: none;">
     <video id="adVideo" class="ad-video" playsinline>
