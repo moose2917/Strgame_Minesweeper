@@ -55,6 +55,25 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB_6LGDvxrWBmGEJcz1ApJZ-LYkzWuKWNI",
+    authDomain: "minesweeper-8b1d8.firebaseapp.com",
+    projectId: "minesweeper-8b1d8",
+    storageBucket: "minesweeper-8b1d8.firebasestorage.app",
+    messagingSenderId: "452832722282",
+    appId: "1:452832722282:web:d1708cbf1daa804ec03913",
+    measurementId: "G-GGSZTMJ7GQ"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  </script>
+
   <script src="script.js"></script>
   <div id="adContainer" style="display: none;">
     <video id="adVideo" class="ad-video" playsinline>

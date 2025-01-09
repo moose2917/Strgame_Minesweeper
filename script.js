@@ -33,6 +33,22 @@ const MINE_MESSAGES = {
 let rankings = [];
 const MAX_RANKINGS = 10; // Maximum number of rankings to display
 
+// Load rankings immediately when script loads
+const savedRankings = localStorage.getItem('minesweeperRankings');
+if (savedRankings) {
+    rankings = JSON.parse(savedRankings);
+} else {
+    // Initialize empty rankings array if none exists
+    localStorage.setItem('minesweeperRankings', JSON.stringify([]));
+}
+
+// Add this helper function to format time
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+}
+
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
             (navigator.maxTouchPoints > 0) ||
@@ -280,7 +296,7 @@ function checkWin() {
     // Save the ranking
     saveRanking(playerName, seconds);
     
-    // Display win message
+    // Create win message
     const winMessage = document.createElement('div');
     winMessage.id = 'winMessage';
     winMessage.style.position = 'fixed';
@@ -302,11 +318,12 @@ function checkWin() {
         <p>完成時間: ${formatTime(seconds)}</p>
         <button class="restart-btn">再玩一次</button>
         <button class="view-rankings-btn">查看排行榜</button>
-        <p style="color: #ff0000; margin-top: 5px;">成功更新排行榜</p>
+        <p style="color: #4CAF50; margin-top: 5px;">成功更新排行榜</p>
     `;
     
-    // Add event listeners
     document.body.appendChild(winMessage);
+    
+    // Add event listeners
     document.querySelector('.view-rankings-btn').addEventListener('click', showRankings);
     document.querySelector('.restart-btn').addEventListener('click', () => {
         document.getElementById('winMessage').remove();
@@ -366,13 +383,19 @@ function validateAndStartGame() {
             </div>
         </section>
         <section class="game-ad-section">
-            <img src="image/TNNSS2_Banner.png" alt="TNNS Banner" class="ad-banner">
+            <div class="banner-container">
+                <div class="banner-wrapper">
+                    <img src="image/TNNSS2_Banner.png" alt="TNNS Banner" class="ad-banner">
+                </div>
+            </div>
         </section>
     `;
     
+    // Initialize game after DOM elements are created
     setTimeout(() => {
         initializeGame();
         setupEventListeners();
+        updateDeviceSpecificElements();
     }, 0);
 }
 
@@ -631,9 +654,22 @@ function initBannerRotation() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded');
     
+    // Load existing rankings from localStorage
+    const savedRankings = localStorage.getItem('minesweeperRankings');
+    if (savedRankings) {
+        rankings = JSON.parse(savedRankings);
+    }
+    
     const startGameBtn = document.getElementById('startGameBtn');
     if (startGameBtn) {
         startGameBtn.addEventListener('click', validateAndStartGame);
+    }
+    
+    const closeRankingBtn = document.querySelector('.close-ranking-btn');
+    if (closeRankingBtn) {
+        closeRankingBtn.addEventListener('click', () => {
+            document.getElementById('rankingModal').style.display = 'none';
+        });
     }
 });
 
@@ -708,72 +744,63 @@ function gameOver(row, col) {
     }, 2000); // 2秒延遲
 }
 
+// Get Firestore instance
+const db = firebase.firestore();
+
 function saveRanking(name, time) {
-    // Don't save if time is 0
-    if (time === 0) {
-        return;
-    }
-
-    // Load existing rankings from localStorage
-    const savedRankings = localStorage.getItem('minesweeperRankings');
-    rankings = savedRankings ? JSON.parse(savedRankings) : [];
+    if (time === 0) return;
     
-    // Add new ranking
-    rankings.push({
+    // Send score to backend
+    db.collection('rankings').add({
         name: name,
-        time: time
+        time: time,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        console.log('Ranking saved successfully');
+    })
+    .catch((error) => {
+        console.error('Error saving ranking:', error);
     });
-    
-    // Sort by time (ascending)
-    rankings.sort((a, b) => a.time - b.time);
-    
-    // Keep only top rankings
-    rankings = rankings.slice(0, MAX_RANKINGS);
-    
-    // Save back to localStorage
-    localStorage.setItem('minesweeperRankings', JSON.stringify(rankings));
 }
-
-// Add this function to clear all rankings (you can call this once to reset everything)
-function clearRankings() {
-    localStorage.removeItem('minesweeperRankings');
-    rankings = [];
-}
-
-// Call this once to clear existing rankings with 00:00 times
-clearRankings();
 
 function showRankings() {
-    const rankingModal = document.getElementById('rankingModal');
-    const tableBody = document.querySelector('#rankingTable tbody');
-    tableBody.innerHTML = '';
-    
-    rankings.forEach((rank, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${rank.name}</td>
-            <td>${formatTime(rank.time)}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-    
-    rankingModal.style.display = 'flex';
-}
-
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // ... existing DOMContentLoaded code ...
-    
-    const closeRankingBtn = document.querySelector('.close-ranking-btn');
-    if (closeRankingBtn) {
-        closeRankingBtn.addEventListener('click', () => {
-            document.getElementById('rankingModal').style.display = 'none';
+    // Get rankings from Firestore
+    db.collection('rankings')
+        .orderBy('time', 'asc')
+        .limit(10)
+        .get()
+        .then((querySnapshot) => {
+            const tableBody = document.querySelector('#rankingTable tbody');
+            tableBody.innerHTML = '';
+            
+            querySnapshot.docs.forEach((doc, index) => {
+                const data = doc.data();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${data.name}</td>
+                    <td>${formatTime(data.time)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('rankingModal').style.display = 'flex';
+        })
+        .catch((error) => {
+            console.error('Error getting rankings:', error);
         });
+}
+
+// Test connection
+async function testFirebase() {
+    try {
+        await db.collection('rankings').get();
+        console.log('Successfully connected to Firebase!');
+    } catch (error) {
+        console.error('Error connecting to Firebase:', error);
     }
-});
+}
+
+// Call test function when page loads
+document.addEventListener('DOMContentLoaded', testFirebase);
