@@ -59,19 +59,21 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyB_6LGDvxrWBmGEJcz1ApJZ-LYkzWuKWNI",
-    authDomain: "minesweeper-8b1d8.firebaseapp.com",
-    projectId: "minesweeper-8b1d8",
-    storageBucket: "minesweeper-8b1d8.firebasestorage.app",
-    messagingSenderId: "452832722282",
-    appId: "1:452832722282:web:d1708cbf1daa804ec03913",
-    measurementId: "G-GGSZTMJ7GQ"
-  };
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
+    };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    console.log('Firebase initialized successfully');
   </script>
 
   <script src="script.js"></script>

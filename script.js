@@ -293,41 +293,40 @@ function checkWin() {
         existingWinMessage.remove();
     }
     
-    // Save the ranking
-    saveRanking(playerName, seconds);
-    
-    // Create win message
-    const winMessage = document.createElement('div');
-    winMessage.id = 'winMessage';
-    winMessage.style.position = 'fixed';
-    winMessage.style.top = '50%';
-    winMessage.style.left = '50%';
-    winMessage.style.transform = 'translate(-50%, -50%)';
-    winMessage.style.background = 'rgba(0, 0, 0, 0.5)';
-    winMessage.style.padding = '40px';
-    winMessage.style.borderRadius = '10px';
-    winMessage.style.color = 'white';
-    winMessage.style.textAlign = 'center';
-    winMessage.style.zIndex = '1000';
-    winMessage.style.minWidth = '300px';
-    winMessage.style.width = '80%';
-    winMessage.style.maxWidth = '400px';
-    
-    winMessage.innerHTML = `
-        <h2>恭喜!<br>賀瓏又度過了平安的一集</h2>
-        <p>完成時間: ${formatTime(seconds)}</p>
-        <button class="restart-btn">再玩一次</button>
-        <button class="view-rankings-btn">查看排行榜</button>
-        <p style="color: #4CAF50; margin-top: 5px;">成功更新排行榜</p>
-    `;
-    
-    document.body.appendChild(winMessage);
-    
-    // Add event listeners
-    document.querySelector('.view-rankings-btn').addEventListener('click', showRankings);
-    document.querySelector('.restart-btn').addEventListener('click', () => {
-        document.getElementById('winMessage').remove();
-        initializeGame();
+    // Save the ranking and show message based on whether it was updated
+    saveRanking(playerName, seconds).then(wasUpdated => {
+        const winMessage = document.createElement('div');
+        winMessage.id = 'winMessage';
+        winMessage.style.position = 'fixed';
+        winMessage.style.top = '50%';
+        winMessage.style.left = '50%';
+        winMessage.style.transform = 'translate(-50%, -50%)';
+        winMessage.style.background = 'rgba(0, 0, 0, 0.5)';
+        winMessage.style.padding = '40px';
+        winMessage.style.borderRadius = '10px';
+        winMessage.style.color = 'white';
+        winMessage.style.textAlign = 'center';
+        winMessage.style.zIndex = '1000';
+        winMessage.style.minWidth = '300px';
+        winMessage.style.width = '80%';
+        winMessage.style.maxWidth = '400px';
+        
+        winMessage.innerHTML = `
+            <h2>恭喜!<br>賀瓏又度過了平安的一集</h2>
+            <p>完成時間: ${formatTime(seconds)}</p>
+            ${wasUpdated ? '<p style="color: #ff0000; margin-top: 5px;">成功更新排行榜</p>' : ''}
+            <button class="view-rankings-btn">查看排行榜</button>
+            <button class="restart-btn">再玩一次</button>
+        `;
+        
+        document.body.appendChild(winMessage);
+        
+        // Add event listeners
+        document.querySelector('.view-rankings-btn').addEventListener('click', showRankings);
+        document.querySelector('.restart-btn').addEventListener('click', () => {
+            document.getElementById('winMessage').remove();
+            initializeGame();
+        });
     });
     
     return true;
@@ -750,18 +749,25 @@ const db = firebase.firestore();
 function saveRanking(name, time) {
     if (time === 0) return;
     
-    // Send score to backend
-    db.collection('rankings').add({
-        name: name,
-        time: time,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(() => {
-        console.log('Ranking saved successfully');
-    })
-    .catch((error) => {
-        console.error('Error saving ranking:', error);
-    });
+    // Get current rankings to check if new score qualifies
+    return db.collection('rankings')
+        .orderBy('time', 'desc')
+        .limit(10)
+        .get()
+        .then((querySnapshot) => {
+            const currentRankings = querySnapshot.docs.map(doc => doc.data());
+            const shouldAddScore = currentRankings.length < 10 || time < currentRankings[currentRankings.length - 1].time;
+            
+            if (shouldAddScore) {
+                // Add new ranking if it qualifies
+                return db.collection('rankings').add({
+                    name: name,
+                    time: time,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => true); // Return true if ranking was updated
+            }
+            return false; // Return false if ranking wasn't updated
+        });
 }
 
 function showRankings() {
